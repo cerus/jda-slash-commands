@@ -211,7 +211,7 @@ public class JDASlashCommands {
 
     private static InteractionResponseOption findArgument(final ApplicationCommand command, final Interaction interaction) {
         final List<ApplicationCommandOption> cmdOptions = new ArrayList<>();
-        dumpList(cmdOptions, command.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0);
+        dumpList(cmdOptions, command.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, ApplicationCommandOption::getOptions);
         final Set<String> argNames = cmdOptions.stream()
                 .filter(option -> option.getType() != ApplicationCommandOptionType.SUB_COMMAND
                         && option.getType() != ApplicationCommandOptionType.SUB_COMMAND_GROUP)
@@ -219,7 +219,7 @@ public class JDASlashCommands {
                 .collect(Collectors.toSet());
 
         final List<InteractionResponseOption> rspOptions = new ArrayList<>();
-        dumpList(rspOptions, interaction.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0);
+        dumpList(rspOptions, interaction.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, InteractionResponseOption::getOptions);
         return rspOptions.stream()
                 .filter(option -> argNames.contains(option.getName()))
                 .findAny()
@@ -229,7 +229,7 @@ public class JDASlashCommands {
     private static <T> void dumpList(final List<T> options, final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
         for (final T item : list) {
             if (predicate.test(item)) {
-                dumpList(options, list, predicate);
+                dumpList(options, function.apply(item), predicate, function);
             } else {
                 options.add(item);
             }

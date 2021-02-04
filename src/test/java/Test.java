@@ -2,11 +2,15 @@ import de.cerus.jdasc.JDASlashCommands;
 import de.cerus.jdasc.command.ApplicationCommand;
 import de.cerus.jdasc.command.ApplicationCommandListener;
 import de.cerus.jdasc.command.ApplicationCommandOption;
+import de.cerus.jdasc.command.ApplicationCommandOptionChoice;
 import de.cerus.jdasc.command.ApplicationCommandOptionType;
 import de.cerus.jdasc.command.CommandBuilder;
+import de.cerus.jdasc.http.DiscordApiException;
+import de.cerus.jdasc.http.DiscordHttpClient;
 import de.cerus.jdasc.interaction.Interaction;
 import de.cerus.jdasc.interaction.response.InteractionResponseOption;
 import java.awt.Color;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,17 +50,15 @@ public class Test {
                         .option(new CommandBuilder.SubCommandBuilder()
                                 .name("aaa")
                                 .desc("aaaaaaa")
-                                .option(new ApplicationCommandOption(
-                                        ApplicationCommandOptionType.CHANNEL,
-                                        "arg2",
-                                        "Desc arg2",
-                                        true,
-                                        null,
-                                        new ArrayList<>()
-                                ))
+                                .option(new ApplicationCommandOption(ApplicationCommandOptionType.STRING, "choice", "lol", true, Arrays.asList(
+                                        new ApplicationCommandOptionChoice("ains", "1"),
+                                        new ApplicationCommandOptionChoice("swai", "2"),
+                                        new ApplicationCommandOptionChoice("drai", "3")
+                                ), new ArrayList<>()))
                                 .build())
                         .build())
                 .build();
+        System.out.println(new DiscordHttpClient("", "", jda).getGson().toJson(testCmd));
 
         JDASlashCommands.submitGuildCommand(testCmd, jda.getGuilds().get(0), new ApplicationCommandListener() {
             @Override
@@ -65,13 +67,15 @@ public class Test {
 
             @Override
             public void handleArgument(final Interaction interaction, final String argumentName, final InteractionResponseOption option) {
-                System.out.println(argumentName);
-                if (argumentName.equals("arg1")) {
-                    System.out.println("Arg1 !!!");
-                }
+                System.out.println(argumentName + ": " + option.getValue());
             }
         }).whenComplete((aLong, throwable) -> {
             System.out.println(throwable.getMessage());
+            try {
+                System.out.println(((DiscordApiException) throwable).getResponse().body().string());
+            } catch (final IOException e) {
+                e.printStackTrace();
+            }
         });
         JDASlashCommands.submitGlobalCommand(new ApplicationCommand("cool-test-command", "Never gonna give you up"), interaction -> {
             interaction.respond(false, Arrays.asList(

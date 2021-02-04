@@ -1,6 +1,7 @@
 package de.cerus.jdasc.command;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CommandBuilder {
@@ -88,6 +89,11 @@ public class CommandBuilder {
 
         public SubCommandBuilder option(final ApplicationCommandOption option) {
             this.options.add(option);
+            return this;
+        }
+
+        public SubCommandBuilder choices(final ApplicationCommandOptionChoice... choices) {
+            this.choices.addAll(Arrays.asList(choices));
             return this;
         }
 
