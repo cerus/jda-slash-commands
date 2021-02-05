@@ -19,8 +19,12 @@ public abstract class CommandRouter implements ApplicationCommandListener {
         this.route(interaction.getChannel().getJDA(), JDASlashCommands.getCommand(interaction.getCommandId()), interaction);
     }
 
-    protected String makePath(final Interaction interaction) {
-        final StringBuilder stringBuilder = new StringBuilder(this.prefix).append(interaction.getCommandName()).append(" ");
+    protected String makeCommandString(final Interaction interaction) {
+        return this.makeCommandString(true, interaction);
+    }
+
+    protected String makeCommandString(final boolean withPrefix, final Interaction interaction) {
+        final StringBuilder stringBuilder = new StringBuilder(withPrefix ? this.prefix : "").append(interaction.getCommandName()).append(" ");
         this.walk(interaction.getOptions(), stringBuilder);
         return stringBuilder.toString();
     }

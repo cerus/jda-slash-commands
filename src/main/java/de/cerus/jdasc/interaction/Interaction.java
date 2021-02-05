@@ -45,6 +45,13 @@ public class Interaction {
         this.options = options;
     }
 
+    /**
+     * Acknowledge the interaction but don't send a message.
+     *
+     * @param eatInput Whether you want to not show (eat) the user's input (message)
+     *
+     * @return A future
+     */
     public CompletableFuture<Void> acknowledge(final boolean eatInput) {
         return this.respond(new InteractionResponse(
                 eatInput ? InteractionResponseType.ACKNOWLEDGE : InteractionResponseType.ACKNOWLEDGE_WITH_SOURCE,
@@ -52,10 +59,32 @@ public class Interaction {
         ));
     }
 
+    /**
+     * Acknowledge the interaction and send a message.
+     *
+     * @param eatInput Whether you want to not show (eat) the user's input (message)
+     * @param embeds   Up to 10 MessageEmbed's
+     *
+     * @return A future
+     *
+     * @see MessageEmbed
+     * @see net.dv8tion.jda.api.EmbedBuilder
+     */
     public CompletableFuture<Void> respond(final boolean eatInput, final MessageEmbed... embeds) {
         return this.respond(eatInput, Arrays.asList(embeds));
     }
 
+    /**
+     * Acknowledge the interaction and send a message.
+     *
+     * @param eatInput Whether you want to not show (eat) the user's input (message)
+     * @param embeds   Up to 10 MessageEmbed's
+     *
+     * @return A future
+     *
+     * @see MessageEmbed
+     * @see net.dv8tion.jda.api.EmbedBuilder
+     */
     public CompletableFuture<Void> respond(final boolean eatInput, final List<MessageEmbed> embeds) {
         return this.respond(new InteractionResponse(
                 eatInput ? InteractionResponseType.CHANNEL_MESSAGE : InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -67,6 +96,14 @@ public class Interaction {
         ));
     }
 
+    /**
+     * Acknowledge the interaction and send a message.
+     *
+     * @param eatInput Whether you want to not show (eat) the user's input (message)
+     * @param message  Your message
+     *
+     * @return A future
+     */
     public CompletableFuture<Void> respond(final boolean eatInput, final String message) {
         return this.respond(new InteractionResponse(
                 eatInput ? InteractionResponseType.CHANNEL_MESSAGE : InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
