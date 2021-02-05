@@ -39,7 +39,7 @@ This library is also lacking some documentation. If you have any questions feel 
     <dependency>
         <groupId>com.github.cerus</groupId>
         <artifactId>jda-slash-commands</artifactId>
-        <version>47f3ff2ac6</version>
+        <version>TAG</version>
     </dependency>
 </dependencies>
   ```
