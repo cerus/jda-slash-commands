@@ -27,6 +27,7 @@ public abstract class CommandRouter implements ApplicationCommandListener {
 
     private void walk(final List<InteractionResponseOption> options, final StringBuilder output) {
         for (final InteractionResponseOption option : options) {
+            System.out.println("-> " + option.getName() + " " + option.getValue());
             if (option.getOptions() != null && !option.getOptions().isEmpty()) {
                 output.append(option.getName()).append(" ");
                 this.walk(option.getOptions(), output);
