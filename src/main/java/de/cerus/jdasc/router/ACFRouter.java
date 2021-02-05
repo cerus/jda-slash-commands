@@ -56,6 +56,17 @@ public class ACFRouter extends CommandRouter {
             public Member getMember() {
                 return interaction.getMember();
             }
+
+            @Override
+            public long getIdLong() {
+                return 0L;
+            }
+
+            @NotNull
+            @Override
+            public String getId() {
+                return String.valueOf(this.getIdLong());
+            }
         };
 
         final MessageReceivedEvent event = new MessageReceivedEvent(jda, jda.getResponseTotal(), message);
