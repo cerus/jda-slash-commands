@@ -301,21 +301,15 @@ public class JDASlashCommands {
         final List<ApplicationCommandOption> cmdOptions = new ArrayList<>();
         walkList(cmdOptions, command.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, ApplicationCommandOption::getOptions);
         final Set<String> argNames = cmdOptions.stream()
-                .peek(option -> System.out.println(option.getName() + " #"))
                 .filter(option -> option.getType() != ApplicationCommandOptionType.SUB_COMMAND
                         && option.getType() != ApplicationCommandOptionType.SUB_COMMAND_GROUP)
                 .map(ApplicationCommandOption::getName)
                 .collect(Collectors.toSet());
 
-        System.out.println(String.join(",", argNames));
-
         final List<InteractionResponseOption> rspOptions = new ArrayList<>();
         walkList(rspOptions, interaction.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, InteractionResponseOption::getOptions);
         return rspOptions.stream()
-                .peek(option -> System.out.println(option.getName()))
-                .filter(option -> {
-                    return (argNames.contains(option.getName()));
-                })
+                .filter(option -> argNames.contains(option.getName()))
                 .findAny()
                 .orElse(null);
     }

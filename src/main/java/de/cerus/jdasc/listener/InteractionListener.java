@@ -1,7 +1,6 @@
 package de.cerus.jdasc.listener;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -30,8 +29,6 @@ public class InteractionListener extends ListenerAdapter {
             final DataObject payload = event.getPayload();
             final JsonObject object = JsonParser.parseString(payload.toString()).getAsJsonObject();
             final JsonObject dataObject = object.get("data").getAsJsonObject();
-
-            System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(dataObject));
 
             final String token = object.get("token").getAsString();
             final String commandName = dataObject.get("name").getAsString();
