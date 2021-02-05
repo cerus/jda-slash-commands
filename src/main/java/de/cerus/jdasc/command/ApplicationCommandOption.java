@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+/**
+ * Represents a option. A option could be a sub command, a sub command group or a argument.
+ * See https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoption
+ */
 public class ApplicationCommandOption {
 
     private static final Predicate<String> NAME_PREDICATE = s -> s.matches("^[\\w-]{3,32}");
@@ -19,6 +23,14 @@ public class ApplicationCommandOption {
     public ApplicationCommandOption(final ApplicationCommandOptionType type, final String name, final String description) {
         this(type, name, description, false, null, type == ApplicationCommandOptionType.SUB_COMMAND
                 || type == ApplicationCommandOptionType.SUB_COMMAND_GROUP ? new ArrayList<>() : null);
+    }
+
+    public ApplicationCommandOption(final ApplicationCommandOptionType type,
+                                    final String name,
+                                    final String description,
+                                    final boolean required,
+                                    final List<ApplicationCommandOption> options) {
+        this(type, name, description, required, null, options);
     }
 
     public ApplicationCommandOption(final ApplicationCommandOptionType type,
@@ -50,18 +62,9 @@ public class ApplicationCommandOption {
         if (this.type == ApplicationCommandOptionType.SUB_COMMAND && this.options != null && this.options.size() > 10) {
             throw new IllegalStateException("There are only 10 options allowed per sub command");
         }
-    }
-
-    @Override
-    public String toString() {
-        return "ApplicationCommandOption{" +
-                "type=" + this.type +
-                ", name='" + this.name + '\'' +
-                ", description='" + this.description + '\'' +
-                ", required=" + this.required +
-                ", choices=" + this.choices +
-                ", options=" + this.options +
-                '}';
+        if (this.choices != null && this.type != ApplicationCommandOptionType.STRING && this.type != ApplicationCommandOptionType.INTEGER) {
+            throw new IllegalStateException("Choices are only allowed for STRING and INTEGER arguments");
+        }
     }
 
     public ApplicationCommandOptionType getType() {

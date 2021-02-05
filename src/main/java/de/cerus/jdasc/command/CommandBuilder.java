@@ -3,7 +3,12 @@ package de.cerus.jdasc.command;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
+/**
+ * A helper class for building commands.
+ */
 public class CommandBuilder {
 
     private final List<ApplicationCommandOption> options = new ArrayList<>();
@@ -21,11 +26,16 @@ public class CommandBuilder {
     }
 
     public CommandBuilder option(final ApplicationCommandOption option) {
-        this.options.add(option);
+        if (option != null) {
+            this.options.add(option);
+        }
         return this;
     }
 
     public ApplicationCommand build() {
+        if (this.name == null || this.desc == null) {
+            throw new NullPointerException("name or desc is null");
+        }
         return new ApplicationCommand(
                 this.name,
                 this.desc,
@@ -36,11 +46,12 @@ public class CommandBuilder {
     public static class SubCommandGroupBuilder {
 
         private final List<ApplicationCommandOption> options = new ArrayList<>();
-        private final String name;
+        private String name;
         private String desc;
 
-        public SubCommandGroupBuilder(final String name) {
+        public SubCommandGroupBuilder name(final String name) {
             this.name = name;
+            return this;
         }
 
         public SubCommandGroupBuilder desc(final String desc) {
@@ -49,11 +60,16 @@ public class CommandBuilder {
         }
 
         public SubCommandGroupBuilder option(final ApplicationCommandOption option) {
-            this.options.add(option);
+            if (option != null) {
+                this.options.add(option);
+            }
             return this;
         }
 
         public ApplicationCommandOption build() {
+            if (this.name == null || this.desc == null) {
+                throw new NullPointerException("name or desc is null");
+            }
             return new ApplicationCommandOption(ApplicationCommandOptionType.SUB_COMMAND_GROUP,
                     this.name,
                     this.desc,
@@ -88,16 +104,23 @@ public class CommandBuilder {
         }
 
         public SubCommandBuilder option(final ApplicationCommandOption option) {
-            this.options.add(option);
+            if (option != null) {
+                this.options.add(option);
+            }
             return this;
         }
 
         public SubCommandBuilder choices(final ApplicationCommandOptionChoice... choices) {
-            this.choices.addAll(Arrays.asList(choices));
+            this.choices.addAll(Arrays.asList(choices).stream()
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
             return this;
         }
 
         public ApplicationCommandOption build() {
+            if (this.name == null || this.desc == null) {
+                throw new NullPointerException("name or desc is null");
+            }
             return new ApplicationCommandOption(
                     ApplicationCommandOptionType.SUB_COMMAND,
                     this.name,

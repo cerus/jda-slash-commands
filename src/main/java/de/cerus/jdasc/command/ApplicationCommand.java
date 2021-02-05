@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+/**
+ * Represents a basic application command.
+ * See https://discord.com/developers/docs/interactions/slash-commands#applicationcommand
+ */
 public class ApplicationCommand {
 
     private static final Predicate<String> NAME_PREDICATE = s -> s.matches("^[\\w-]{3,32}");
@@ -21,6 +25,8 @@ public class ApplicationCommand {
         this.name = name;
         this.description = description;
         this.options = options;
+
+        this.validate();
     }
 
     private void validate() {
@@ -33,15 +39,6 @@ public class ApplicationCommand {
         if (this.options != null && this.options.size() > 10) {
             throw new IllegalStateException("There are only 10 options allowed per command");
         }
-    }
-
-    @Override
-    public String toString() {
-        return "ApplicationCommand{" +
-                "name='" + this.name + '\'' +
-                ", description='" + this.description + '\'' +
-                ", options=" + this.options +
-                '}';
     }
 
     public String getName() {

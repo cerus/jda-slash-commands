@@ -27,22 +27,28 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.internal.JDAImpl;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 
 public class JDASlashCommands {
 
-    // Idea: Static class
-
     private static final Map<Long, ApplicationCommand> commandMap = new HashMap<>();
     private static final Map<ApplicationCommand, ApplicationCommandListener> commandListenerMap = new HashMap<>();
 
     private static DiscordHttpClient discordHttpClient;
-    private static JDA jda;
 
     private JDASlashCommands() {
     }
 
+    /**
+     * Create or update a global command.
+     *
+     * @param command  The command you'd like to create / update
+     * @param listener The interaction listener
+     *
+     * @return The command id
+     */
     public static CompletableFuture<Long> submitGlobalCommand(final ApplicationCommand command, final ApplicationCommandListener listener) {
         final CompletableFuture<Long> future = new CompletableFuture<>();
         discordHttpClient.submitGlobalCommand(command).whenComplete((response, throwable) -> {
@@ -64,17 +70,35 @@ public class JDASlashCommands {
         return future;
     }
 
+    /**
+     * Create or update a guild command.
+     *
+     * @param command  The command you'd like to create / update
+     * @param guild    The guild that should have access to this command
+     * @param listener The interaction listener
+     *
+     * @return The command id
+     */
     public static CompletableFuture<Long> submitGuildCommand(final ApplicationCommand command,
                                                              final Guild guild,
                                                              final ApplicationCommandListener listener) {
         return submitGuildCommand(command, guild.getIdLong(), listener);
     }
 
+    /**
+     * Create or update a guild command.
+     *
+     * @param command  The command you'd like to create / update
+     * @param guildId  The id of the guild that should have access to this command
+     * @param listener The interaction listener
+     *
+     * @return The command id
+     */
     public static CompletableFuture<Long> submitGuildCommand(final ApplicationCommand command,
-                                                             final long guild,
+                                                             final long guildId,
                                                              final ApplicationCommandListener listener) {
         final CompletableFuture<Long> future = new CompletableFuture<>();
-        discordHttpClient.submitGuildCommand(command, guild).whenComplete((response, throwable) -> {
+        discordHttpClient.submitGuildCommand(command, guildId).whenComplete((response, throwable) -> {
             if (throwable != null) {
                 future.completeExceptionally(throwable);
                 return;
@@ -93,6 +117,14 @@ public class JDASlashCommands {
         return future;
     }
 
+    /**
+     * Submit a response to a interaction
+     *
+     * @param interaction The interaction that you want to respond to
+     * @param response    Your response
+     *
+     * @return Nothing
+     */
     public static CompletableFuture<Void> submitInteractionResponse(final Interaction interaction, final InteractionResponse response) {
         final CompletableFuture<Void> future = new CompletableFuture<>();
         discordHttpClient.submitInteractionReply(interaction, response).whenComplete((rsp, t) -> {
@@ -105,6 +137,13 @@ public class JDASlashCommands {
         return future;
     }
 
+    /**
+     * Retrieve a global command
+     *
+     * @param commandId The id of the command
+     *
+     * @return The command
+     */
     public static CompletableFuture<ApplicationCommand> getGlobalCommand(final long commandId) {
         final CompletableFuture<ApplicationCommand> future = new CompletableFuture<>();
         discordHttpClient.getGlobalCommand(commandId).whenComplete((response, throwable) -> {
@@ -123,6 +162,14 @@ public class JDASlashCommands {
         return future;
     }
 
+    /**
+     * Retrieve a guild command
+     *
+     * @param guildId   The id of the guild
+     * @param commandId The id of the command
+     *
+     * @return The command
+     */
     public static CompletableFuture<ApplicationCommand> getGuildCommand(final long guildId, final long commandId) {
         final CompletableFuture<ApplicationCommand> future = new CompletableFuture<>();
         discordHttpClient.getGuildCommand(guildId, commandId).whenComplete((response, throwable) -> {
@@ -141,6 +188,11 @@ public class JDASlashCommands {
         return future;
     }
 
+    /**
+     * Retrieve all global commands
+     *
+     * @return All global commands
+     */
     public static CompletableFuture<List<ApplicationCommand>> getGlobalCommands() {
         final CompletableFuture<List<ApplicationCommand>> future = new CompletableFuture<>();
         discordHttpClient.getGlobalCommands().whenComplete((response, throwable) -> {
@@ -154,6 +206,13 @@ public class JDASlashCommands {
         return future;
     }
 
+    /**
+     * Retrieve all guild commands of a specific guild
+     *
+     * @param guild The guild
+     *
+     * @return The guild commands
+     */
     public static CompletableFuture<List<ApplicationCommand>> getGuildCommands(final Guild guild) {
         return getGuildCommands(guild.getIdLong());
     }
@@ -171,6 +230,12 @@ public class JDASlashCommands {
         return future;
     }
 
+    /**
+     * Parse a response into commands
+     *
+     * @param future
+     * @param response
+     */
     private static void parseCommands(final CompletableFuture<List<ApplicationCommand>> future, final Response response) {
         final List<ApplicationCommand> list = new ArrayList<>();
         try {
@@ -185,8 +250,18 @@ public class JDASlashCommands {
         future.complete(list);
     }
 
+    /**
+     * Initialize this library
+     *
+     * @param jda           The JDA instance
+     * @param botToken      The bot token
+     * @param applicationId The bot application id
+     */
     public static void initialize(final JDA jda, final String botToken, final String applicationId) {
-        JDASlashCommands.jda = jda;
+        if (jda instanceof JDAImpl && !((JDAImpl) jda).isRawEvents()) {
+            throw new IllegalStateException("Slash commands will not work without raw events! See JDABuilder#setRawEventsEnabled()");
+        }
+
         discordHttpClient = new DiscordHttpClient(botToken, applicationId, jda);
 
         jda.addEventListener(new InteractionListener());
@@ -198,6 +273,11 @@ public class JDASlashCommands {
         });
     }
 
+    /**
+     * Notify the corresponding command about a interaction
+     *
+     * @param interaction The interaction
+     */
     public static void handleInteraction(final Interaction interaction) {
         final ApplicationCommand command = commandMap.get(interaction.getCommandId());
         final ApplicationCommandListener listener = commandListenerMap.get(command);
@@ -209,9 +289,17 @@ public class JDASlashCommands {
         }
     }
 
+    /**
+     * Walk the provided interaction options and find a command argument
+     *
+     * @param command     The command
+     * @param interaction The interaction
+     *
+     * @return A argument or null
+     */
     private static InteractionResponseOption findArgument(final ApplicationCommand command, final Interaction interaction) {
         final List<ApplicationCommandOption> cmdOptions = new ArrayList<>();
-        dumpList(cmdOptions, command.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, ApplicationCommandOption::getOptions);
+        walkList(cmdOptions, command.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, ApplicationCommandOption::getOptions);
         final Set<String> argNames = cmdOptions.stream()
                 .filter(option -> option.getType() != ApplicationCommandOptionType.SUB_COMMAND
                         && option.getType() != ApplicationCommandOptionType.SUB_COMMAND_GROUP)
@@ -219,23 +307,30 @@ public class JDASlashCommands {
                 .collect(Collectors.toSet());
 
         final List<InteractionResponseOption> rspOptions = new ArrayList<>();
-        dumpList(rspOptions, interaction.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, InteractionResponseOption::getOptions);
+        walkList(rspOptions, interaction.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, InteractionResponseOption::getOptions);
         return rspOptions.stream()
                 .filter(option -> argNames.contains(option.getName()))
                 .findAny()
                 .orElse(null);
     }
 
-    private static <T> void dumpList(final List<T> options, final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
+    private static <T> void walkList(final List<T> output, final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
         for (final T item : list) {
             if (predicate.test(item)) {
-                dumpList(options, function.apply(item), predicate, function);
+                walkList(output, function.apply(item), predicate, function);
             } else {
-                options.add(item);
+                output.add(item);
             }
         }
     }
 
+    /**
+     * Get a command by id
+     *
+     * @param id The command id
+     *
+     * @return The command
+     */
     public static ApplicationCommand getCommand(final long id) {
         return commandMap.get(id);
     }

@@ -2,6 +2,10 @@ package de.cerus.jdasc.command;
 
 import java.util.function.Predicate;
 
+/**
+ * Represents a choice. The name of the choice is visible to the user and the value of the choice will be used by the api.
+ * See https://discord.com/developers/docs/interactions/slash-commands#applicationcommandoptionchoice
+ */
 public class ApplicationCommandOptionChoice {
 
     private static final Predicate<String> NAME_PREDICATE = s -> s.length() >= 1 && s.length() <= 100;

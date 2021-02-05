@@ -4,6 +4,9 @@ import de.cerus.jdasc.interaction.Interaction;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.Event;
 
+/**
+ * A simple event for interactions
+ */
 public class CommandInteractionEvent extends Event {
 
     private final Interaction interaction;
