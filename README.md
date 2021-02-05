@@ -76,10 +76,12 @@ JDASlashCommands.submitGlobalCommand(new CommandBuilder()
                         .build())
                 .build())
         .build(), new ApplicationCommandListener() {
+    
     @Override
     public void onInteraction(final Interaction interaction) {
-        System.out.println("We got an interaction! Yay!°");
+        System.out.println("We got an interaction! Yay!");
     }
+    
     @Override
     public void handleArgument(final Interaction interaction, final String argumentName, final InteractionResponseOption option) {
         switch (argumentName) {
@@ -91,6 +93,7 @@ JDASlashCommands.submitGlobalCommand(new CommandBuilder()
                 break;
         }
     }
+    
 });
 ```
 
