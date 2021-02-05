@@ -236,4 +236,8 @@ public class JDASlashCommands {
         }
     }
 
+    public static ApplicationCommand getCommand(final long id) {
+        return commandMap.get(id);
+    }
+
 }
