@@ -12,10 +12,10 @@ public class ApplicationCommand {
 
     private static final Predicate<String> NAME_PREDICATE = s -> s.matches("^[\\w-]{3,32}");
     private static final Predicate<String> DESCRIPTION_PREDICATE = s -> s.length() >= 1 && s.length() <= 100;
-
     private final String name;
     private final String description;
     private final List<ApplicationCommandOption> options;
+    private long id;
 
     public ApplicationCommand(final String name, final String description) {
         this(name, description, new ArrayList<>());
@@ -53,4 +53,11 @@ public class ApplicationCommand {
         return this.options;
     }
 
+    public long getId() {
+        return this.id;
+    }
+
+    public void setId(final long id) {
+        this.id = id;
+    }
 }
