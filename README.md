@@ -50,49 +50,48 @@ JDASlashCommands.submitGlobalCommand(new CommandBuilder()
         .name("test-command") // Set command name to '/test-command'
         .desc("My cool test command")
         .option(new CommandBuilder.SubCommandGroupBuilder()
-        .name("some-group") // Specify a group that can hold multiple sub commands
-        .desc("This is a wonderful group")
-        .option(new CommandBuilder.SubCommandBuilder()
-        .name("hello") // Specify sub command 'hello' (/test-command some-group hello)
-        .desc("Greet a user")
-        .option(new ApplicationCommandOption(
-        ApplicationCommandOptionType.USER,
-        "user",
-        "Specify a user to greet",
-        true
-        ))
-        .build())
-        .option(new CommandBuilder.SubCommandBuilder()
-        .name("animal") // Specify sub command 'animal' (/test-command some-group animal)
-        .desc("Show a animal picture")
-        .choices( // Only allow certain values: Cat, Dog and Platypus
-        ApplicationCommandOptionType.STRING, // Specify type of the choice: STRING or INTEGER
-        "animal", // Note the lower case name - Names have to be lower case or else things could break 
-        "Specify the animal",
-        new ApplicationCommandOptionChoice("Cat","cat"),
-        new ApplicationCommandOptionChoice("Dog","cat"),
-        new ApplicationCommandOptionChoice("Platypus","platypus")
-        )
-        .build())
-        .build())
-        .build(),new ApplicationCommandListener(){
-@Override
-public void onInteraction(final Interaction interaction){
-        System.out.println("We got an interaction! Yay!");
+                .name("some-group") // Specify a group that can hold multiple sub commands
+                .desc("This is a wonderful group")
+                .option(new CommandBuilder.SubCommandBuilder()
+                        .name("hello") // Specify sub command 'hello' (/test-command some-group hello)
+                        .desc("Greet a user")
+                        .option(new ApplicationCommandOption(
+                                ApplicationCommandOptionType.USER,
+                                "user",
+                                "Specify a user to greet",
+                                true
+                        ))
+                        .build())
+                .option(new CommandBuilder.SubCommandBuilder()
+                        .name("animal") // Specify sub command 'animal' (/test-command some-group animal)
+                        .desc("Show a animal picture")
+                        .choices( // Only allow certain values: Cat, Dog and Platypus
+                                ApplicationCommandOptionType.STRING, // Specify type of the choice: STRING or INTEGER
+                                "animal", // Note the lower case name - Names have to be lower case or else things could break
+                                "Specify the animal",
+                                new ApplicationCommandOptionChoice("Cat", "cat"),
+                                new ApplicationCommandOptionChoice("Dog", "cat"),
+                                new ApplicationCommandOptionChoice("Platypus", "platypus")
+                        )
+                        .build())
+                .build())
+        .build(), new ApplicationCommandListener() {
+    @Override
+    public void onInteraction(final Interaction interaction) {
+        System.out.println("We got an interaction! Yay!°");
+    }
+    @Override
+    public void handleArgument(final Interaction interaction, final String argumentName, final InteractionResponseOption option) {
+        switch (argumentName) {
+            case "user":
+                interaction.respond(false, "Hello, " + jda.getUserById(Long.parseLong(option.getValue())).getAsMention());
+                break;
+            case "animal":
+                interaction.respond(false, "Here's your imaginary picture of a " + option.getValue());
+                break;
         }
-
-@Override
-public void handleArgument(final Interaction interaction,final String argumentName,final InteractionResponseOption option){
-        switch(argumentName){
-        case"user":
-        interaction.respond(false,"Hello, "+jda.getUserById(Long.parseLong(option.getValue())).getAsMention());
-        break;
-        case"animal":
-        interaction.respond(false,"Here's your imaginary picture of a "+option.getValue());
-        break;
-        }
-        }
-        });
+    }
+});
 ```
 
 <details>
