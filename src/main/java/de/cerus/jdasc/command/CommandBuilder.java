@@ -82,7 +82,6 @@ public class CommandBuilder {
 
     public static class SubCommandBuilder {
 
-        private final List<ApplicationCommandOptionChoice> choices = new ArrayList<>();
         private final List<ApplicationCommandOption> options = new ArrayList<>();
         private String name;
         private String desc;
@@ -110,11 +109,20 @@ public class CommandBuilder {
             return this;
         }
 
-        public SubCommandBuilder choices(final ApplicationCommandOptionChoice... choices) {
-            this.choices.addAll(Arrays.asList(choices).stream()
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList()));
-            return this;
+        public SubCommandBuilder choices(final ApplicationCommandOptionType type,
+                                         final String name,
+                                         final String desc,
+                                         final ApplicationCommandOptionChoice... choices) {
+            return this.option(new ApplicationCommandOption(
+                    type,
+                    name,
+                    desc,
+                    true,
+                    Arrays.asList(choices).stream()
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList()),
+                    new ArrayList<>()
+            ));
         }
 
         public ApplicationCommandOption build() {
@@ -126,7 +134,7 @@ public class CommandBuilder {
                     this.name,
                     this.desc,
                     this.required,
-                    this.choices.isEmpty() ? null : this.choices,
+                    null,
                     this.options
             );
         }
