@@ -20,20 +20,19 @@ public abstract class CommandRouter implements ApplicationCommandListener {
     }
 
     protected String makePath(final Interaction interaction) {
-        final StringBuilder stringBuilder = new StringBuilder(this.prefix);
+        final StringBuilder stringBuilder = new StringBuilder(this.prefix).append(interaction.getCommandName()).append(" ");
         this.walk(interaction.getOptions(), stringBuilder);
         return stringBuilder.toString();
     }
 
     private void walk(final List<InteractionResponseOption> options, final StringBuilder output) {
         for (final InteractionResponseOption option : options) {
-            System.out.println("-> " + option.getName() + " " + option.getValue());
             if (option.getOptions() != null && !option.getOptions().isEmpty()) {
                 output.append(option.getName()).append(" ");
                 this.walk(option.getOptions(), output);
             } else {
                 //TODO: Parse value depending on type
-                output.append(option.getValue());
+                output.append(option.getValue() == null ? option.getName() : option.getValue());
             }
         }
     }
