@@ -169,6 +169,8 @@ public class ACFRouter extends CommandRouter {
             }
         };
 
+        System.out.println("'" + message.getContentRaw() + "'");
+
         final MessageReceivedEvent event = new MessageReceivedEvent(jda, jda.getResponseTotal(), message);
         try {
             final Method method = this.commandManager.getClass().getDeclaredMethod("dispatchEvent", MessageReceivedEvent.class);
