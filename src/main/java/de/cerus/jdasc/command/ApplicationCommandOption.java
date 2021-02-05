@@ -28,6 +28,13 @@ public class ApplicationCommandOption {
     public ApplicationCommandOption(final ApplicationCommandOptionType type,
                                     final String name,
                                     final String description,
+                                    final boolean required) {
+        this(type, name, description, required, new ArrayList<>());
+    }
+
+    public ApplicationCommandOption(final ApplicationCommandOptionType type,
+                                    final String name,
+                                    final String description,
                                     final boolean required,
                                     final List<ApplicationCommandOption> options) {
         this(type, name, description, required, null, options);
