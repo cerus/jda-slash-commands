@@ -37,8 +37,6 @@ public class ACFRouter extends CommandRouter {
 
     @Override
     public void route(final JDA jda, final ApplicationCommand command, final Interaction interaction) {
-        interaction.acknowledge(false);
-
         final Message message = new DataMessage(false, this.makePath(interaction), null, null,
                 null, new String[0], new String[0]) {
             @NotNull
@@ -172,14 +170,16 @@ public class ACFRouter extends CommandRouter {
         };
 
         final MessageReceivedEvent event = new MessageReceivedEvent(jda, jda.getResponseTotal(), message);
-        try {
-            final Method method = this.commandManager.getClass().getDeclaredMethod("dispatchEvent", MessageReceivedEvent.class);
-            method.setAccessible(true);
-            method.invoke(this.commandManager, event);
-        } catch (final NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            System.err.println("Failed to route interaction to ACF");
-        }
+        interaction.acknowledge(false).whenComplete((unused, throwable) -> {
+            try {
+                final Method method = this.commandManager.getClass().getDeclaredMethod("dispatchEvent", MessageReceivedEvent.class);
+                method.setAccessible(true);
+                method.invoke(this.commandManager, event);
+            } catch (final NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+                System.err.println("Failed to route interaction to ACF");
+            }
+        });
     }
 
 }
