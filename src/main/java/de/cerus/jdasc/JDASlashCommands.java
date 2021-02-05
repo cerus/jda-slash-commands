@@ -306,10 +306,14 @@ public class JDASlashCommands {
                 .map(ApplicationCommandOption::getName)
                 .collect(Collectors.toSet());
 
+        System.out.println(String.join(",", argNames));
+
         final List<InteractionResponseOption> rspOptions = new ArrayList<>();
         walkList(rspOptions, interaction.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, InteractionResponseOption::getOptions);
         return rspOptions.stream()
-                .filter(option -> argNames.contains(option.getName()))
+                .filter(option -> {
+                    return (argNames.contains(option.getName()));
+                })
                 .findAny()
                 .orElse(null);
     }
