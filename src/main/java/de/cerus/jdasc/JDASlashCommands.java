@@ -311,6 +311,7 @@ public class JDASlashCommands {
         final List<InteractionResponseOption> rspOptions = new ArrayList<>();
         walkList(rspOptions, interaction.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, InteractionResponseOption::getOptions);
         return rspOptions.stream()
+                .peek(option -> System.out.println(option.getName()))
                 .filter(option -> {
                     return (argNames.contains(option.getName()));
                 })
