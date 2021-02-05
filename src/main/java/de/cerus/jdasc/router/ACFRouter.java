@@ -37,6 +37,8 @@ public class ACFRouter extends CommandRouter {
 
     @Override
     public void route(final JDA jda, final ApplicationCommand command, final Interaction interaction) {
+        interaction.acknowledge(false);
+
         final Message message = new DataMessage(false, this.makePath(interaction), null, null,
                 null, new String[0], new String[0]) {
             @NotNull
@@ -168,8 +170,6 @@ public class ACFRouter extends CommandRouter {
                 return new ArrayList<>();
             }
         };
-
-        System.out.println("'" + message.getContentRaw() + "'");
 
         final MessageReceivedEvent event = new MessageReceivedEvent(jda, jda.getResponseTotal(), message);
         try {
