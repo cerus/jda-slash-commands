@@ -301,6 +301,7 @@ public class JDASlashCommands {
         final List<ApplicationCommandOption> cmdOptions = new ArrayList<>();
         walkList(cmdOptions, command.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, ApplicationCommandOption::getOptions);
         final Set<String> argNames = cmdOptions.stream()
+                .peek(option -> System.out.println(option.getName() + " #"))
                 .filter(option -> option.getType() != ApplicationCommandOptionType.SUB_COMMAND
                         && option.getType() != ApplicationCommandOptionType.SUB_COMMAND_GROUP)
                 .map(ApplicationCommandOption::getName)
