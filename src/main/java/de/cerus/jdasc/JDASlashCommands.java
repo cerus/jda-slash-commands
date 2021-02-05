@@ -230,6 +230,14 @@ public class JDASlashCommands {
         return future;
     }
 
+    public static CompletableFuture<Void> deleteGlobalCommand(final long commandId) {
+        return discordHttpClient.deleteGlobalCommand(commandId).thenApply(response -> null);
+    }
+
+    public static CompletableFuture<Void> deleteGuildCommand(final long guildId, final long commandId) {
+        return discordHttpClient.deleteGuildCommand(commandId, guildId).thenApply(response -> null);
+    }
+
     /**
      * Parse a response into commands
      *
