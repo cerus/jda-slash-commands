@@ -14,6 +14,7 @@ This library is also lacking some documentation. If you have any questions feel 
 - Commands
 - Interactions
 - Interactions responses
+- [Command routers](https://github.com/cerus/jda-slash-commands/wiki/Command-Routers) (Automatically route interactions to your command framework)
 
 ## Missing features
 
@@ -46,6 +47,7 @@ This library is also lacking some documentation. If you have any questions feel 
 </details>
 
 ```java
+JDASlashCommands.initialize(jda, BOT_TOKEN, APPLICATION_ID);
 JDASlashCommands.submitGlobalCommand(new CommandBuilder()
         .name("test-command") // Set command name to '/test-command'
         .desc("My cool test command")
@@ -57,7 +59,7 @@ JDASlashCommands.submitGlobalCommand(new CommandBuilder()
                         .desc("Greet a user")
                         .option(new ApplicationCommandOption(
                                 ApplicationCommandOptionType.USER,
-                                "user",
+                                "user", // Note the lower case name - Names have to be lower case or else things could break
                                 "Specify a user to greet",
                                 true
                         ))
