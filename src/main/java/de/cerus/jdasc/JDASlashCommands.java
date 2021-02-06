@@ -343,4 +343,8 @@ public class JDASlashCommands {
         return commandMap.get(id);
     }
 
+    public static DiscordHttpClient getDiscordHttpClient() {
+        return discordHttpClient;
+    }
+
 }
