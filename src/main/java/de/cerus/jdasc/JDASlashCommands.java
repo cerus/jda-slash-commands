@@ -29,7 +29,9 @@ import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.internal.JDAImpl;
 import okhttp3.Response;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 public class JDASlashCommands {
 
@@ -339,10 +341,15 @@ public class JDASlashCommands {
      *
      * @return The command
      */
+    @ApiStatus.Internal
     public static ApplicationCommand getCommand(final long id) {
         return commandMap.get(id);
     }
 
+    @Deprecated
+    @ApiStatus.ScheduledForRemoval
+    @ApiStatus.Experimental
+    @TestOnly
     public static DiscordHttpClient getDiscordHttpClient() {
         return discordHttpClient;
     }
