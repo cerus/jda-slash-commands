@@ -10,6 +10,7 @@ import de.cerus.jdasc.command.ApplicationCommandOption;
 import de.cerus.jdasc.command.ApplicationCommandOptionType;
 import de.cerus.jdasc.http.DiscordHttpClient;
 import de.cerus.jdasc.interaction.Interaction;
+import de.cerus.jdasc.interaction.followup.FollowupMessage;
 import de.cerus.jdasc.interaction.response.InteractionResponse;
 import de.cerus.jdasc.interaction.response.InteractionResponseOption;
 import de.cerus.jdasc.listener.InteractionListener;
@@ -25,9 +26,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.data.DataObject;
 import net.dv8tion.jda.internal.JDAImpl;
+import net.dv8tion.jda.internal.entities.EntityBuilder;
 import okhttp3.Response;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -39,8 +43,26 @@ public class JDASlashCommands {
     private static final Map<ApplicationCommand, ApplicationCommandListener> commandListenerMap = new HashMap<>();
 
     private static DiscordHttpClient discordHttpClient;
+    private static EntityBuilder entityBuilder;
 
     private JDASlashCommands() {
+    }
+
+    public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final FollowupMessage message) {
+        final CompletableFuture<Message> future = new CompletableFuture<>();
+        discordHttpClient.submitFollowupMessage(interaction, message).whenComplete((response, throwable) -> {
+            if (throwable != null) {
+                future.completeExceptionally(throwable);
+                return;
+            }
+
+            try {
+                future.complete(entityBuilder.createMessage(DataObject.fromJson(response.body().string())));
+            } catch (final IOException e) {
+                future.completeExceptionally(e);
+            }
+        });
+        return future;
     }
 
     /**
@@ -273,6 +295,7 @@ public class JDASlashCommands {
         }
 
         discordHttpClient = new DiscordHttpClient(botToken, applicationId, jda);
+        entityBuilder = new EntityBuilder(jda);
 
         jda.addEventListener(new InteractionListener());
         jda.addEventListener(new ListenerAdapter() {
