@@ -127,7 +127,7 @@ public class JDASlashCommands {
      */
     public static CompletableFuture<Void> submitInteractionResponse(final Interaction interaction, final InteractionResponse response) {
         final CompletableFuture<Void> future = new CompletableFuture<>();
-        discordHttpClient.submitInteractionReply(interaction, response).whenComplete((rsp, t) -> {
+        discordHttpClient.submitInteractionResponse(interaction, response).whenComplete((rsp, t) -> {
             if (t != null) {
                 future.completeExceptionally(t);
             } else {

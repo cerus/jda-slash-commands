@@ -2,6 +2,7 @@ package de.cerus.jdasc.http;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import de.cerus.jdasc.command.ApplicationCommand;
 import de.cerus.jdasc.command.ApplicationCommandOptionType;
 import de.cerus.jdasc.gson.ApplicationCommandOptionTypeTypeAdapter;
@@ -9,6 +10,8 @@ import de.cerus.jdasc.gson.InteractionResponseTypeAdapter;
 import de.cerus.jdasc.gson.InteractionResponseTypeTypeAdapter;
 import de.cerus.jdasc.gson.MessageEmbedTypeAdapter;
 import de.cerus.jdasc.interaction.Interaction;
+import de.cerus.jdasc.interaction.followup.FollowupMessage;
+import de.cerus.jdasc.interaction.response.InteractionApplicationCommandCallbackData;
 import de.cerus.jdasc.interaction.response.InteractionResponse;
 import de.cerus.jdasc.interaction.response.InteractionResponseType;
 import java.io.IOException;
@@ -27,7 +30,6 @@ import okhttp3.Response;
 public class DiscordHttpClient {
 
     private final Gson gson;
-
     private final String applicationId;
     private final String botToken;
     private final ExecutorService executorService;
@@ -60,7 +62,57 @@ public class DiscordHttpClient {
                 .create();
     }
 
-    public CompletableFuture<Response> submitInteractionReply(final Interaction interaction, final InteractionResponse response) {
+    public CompletableFuture<Response> deleteFollowupMessage(final Interaction interaction, final long messageId) {
+        return this.execute(new Request.Builder()
+                .url(String.format("https://discord.com/api/v8/webhooks/%s/%s/messages/%d", this.applicationId, interaction.getToken(), messageId))
+                .delete()
+                .addHeader("Authorization", "Bot " + this.botToken)
+                .build(), 200, 204);
+    }
+
+    public CompletableFuture<Response> editFollowupMessage(final Interaction interaction, final long messageId, final FollowupMessage message) {
+        final JsonObject jsonObject = this.gson.toJsonTree(message).getAsJsonObject();
+        jsonObject.remove("tts");
+        jsonObject.remove("username");
+        jsonObject.remove("avatar_url");
+        final String body = jsonObject.toString();
+
+        return this.execute(new Request.Builder()
+                .url(String.format("https://discord.com/api/v8/webhooks/%s/%s/messages/%d", this.applicationId, interaction.getToken(), messageId))
+                .patch(RequestBody.create(body, MediaType.get("application/json; charset=utf-8")))
+                .addHeader("Authorization", "Bot " + this.botToken)
+                .build(), 200, 204);
+    }
+
+    public CompletableFuture<Response> submitFollowupMessage(final Interaction interaction, final FollowupMessage message) {
+        final String body = this.gson.toJson(message);
+        return this.execute(new Request.Builder()
+                .url(String.format("https://discord.com/api/v8/webhooks/%s/%s", this.applicationId, interaction.getToken()))
+                .post(RequestBody.create(body, MediaType.get("application/json; charset=utf-8")))
+                .addHeader("Authorization", "Bot " + this.botToken)
+                .build(), 200, 204, 201);
+    }
+
+    public CompletableFuture<Response> deleteInteractionResponse(final Interaction interaction) {
+        return this.execute(new Request.Builder()
+                .url(String.format("https://discord.com/api/v8/webhooks/%s/%s/messages/@original", this.applicationId, interaction.getToken()))
+                .delete()
+                .addHeader("Authorization", "Bot " + this.botToken)
+                .build(), 204);
+    }
+
+    public CompletableFuture<Response> editInteractionResponse(final Interaction interaction, final InteractionApplicationCommandCallbackData data) {
+        final JsonObject payload = this.gson.toJsonTree(data).getAsJsonObject();
+        payload.remove("tts");
+        final String body = payload.toString();
+        return this.execute(new Request.Builder()
+                .url(String.format("https://discord.com/api/v8/webhooks/%s/%s/messages/@original", this.applicationId, interaction.getToken()))
+                .patch(RequestBody.create(body, MediaType.get("application/json; charset=utf-8")))
+                .addHeader("Authorization", "Bot " + this.botToken)
+                .build(), 200, 204);
+    }
+
+    public CompletableFuture<Response> submitInteractionResponse(final Interaction interaction, final InteractionResponse response) {
         final String body = this.gson.toJson(response);
         return this.execute(new Request.Builder()
                 .url(String.format("https://discord.com/api/v8/interactions/%d/%s/callback", interaction.getId(), interaction.getToken()))
