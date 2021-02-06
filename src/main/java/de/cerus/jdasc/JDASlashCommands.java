@@ -11,11 +11,13 @@ import de.cerus.jdasc.command.ApplicationCommandOptionType;
 import de.cerus.jdasc.http.DiscordHttpClient;
 import de.cerus.jdasc.interaction.Interaction;
 import de.cerus.jdasc.interaction.followup.FollowupMessage;
+import de.cerus.jdasc.interaction.response.InteractionApplicationCommandCallbackData;
 import de.cerus.jdasc.interaction.response.InteractionResponse;
 import de.cerus.jdasc.interaction.response.InteractionResponseOption;
 import de.cerus.jdasc.listener.InteractionListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.data.DataObject;
@@ -46,6 +49,30 @@ public class JDASlashCommands {
     private static EntityBuilder entityBuilder;
 
     private JDASlashCommands() {
+    }
+
+    public static CompletableFuture<Void> deleteFollowupMessage(final Interaction interaction, final long messageId) {
+        return discordHttpClient.deleteFollowupMessage(interaction, messageId).thenApply(response -> null);
+    }
+
+    public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final MessageEmbed... embeds) {
+        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds)));
+    }
+
+    public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final String message) {
+        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>()));
+    }
+
+    public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final FollowupMessage message) {
+        return discordHttpClient.editFollowupMessage(interaction, messageId, message).thenApply(response -> null);
+    }
+
+    public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final MessageEmbed... embeds) {
+        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds)));
+    }
+
+    public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final String message) {
+        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>()));
     }
 
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final FollowupMessage message) {
@@ -139,6 +166,15 @@ public class JDASlashCommands {
             }
         });
         return future;
+    }
+
+    public static CompletableFuture<Void> deleteInteractionResponse(final Interaction interaction) {
+        return discordHttpClient.deleteInteractionResponse(interaction).thenApply(response -> null);
+    }
+
+    public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction,
+                                                                  final InteractionApplicationCommandCallbackData data) {
+        return discordHttpClient.editInteractionResponse(interaction, data).thenApply(response -> null);
     }
 
     /**
