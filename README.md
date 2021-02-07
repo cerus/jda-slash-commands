@@ -16,12 +16,8 @@ This library is also lacking some documentation. If you have any questions feel 
 - Commands
 - Interactions
 - Interactions responses
+- Followup messages
 - [Command routers](https://github.com/cerus/jda-slash-commands/wiki/Command-Routers) (Automatically route interactions to your command framework)
-
-## Missing features
-
-- Deleting / editing interaction responses
-- Sending / deleting / editing followup messages
 
 ## Example
 
