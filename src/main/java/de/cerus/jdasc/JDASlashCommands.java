@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -138,20 +139,13 @@ public class JDASlashCommands {
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final FollowupMessage message) {
-        final CompletableFuture<Message> future = new CompletableFuture<>();
-        discordHttpClient.submitFollowupMessage(interaction, message).whenComplete((response, throwable) -> {
-            if (throwable != null) {
-                future.completeExceptionally(throwable);
-                return;
-            }
-
+        return discordHttpClient.submitFollowupMessage(interaction, message).thenApply(response -> {
             try {
-                future.complete(entityBuilder.createMessage(DataObject.fromJson(response.body().string())));
+                return entityBuilder.createMessage(DataObject.fromJson(response.body().string()));
             } catch (final IOException e) {
-                future.completeExceptionally(e);
+                throw new CompletionException(e);
             }
         });
-        return future;
     }
 
     /**
@@ -163,24 +157,20 @@ public class JDASlashCommands {
      * @return The command id
      */
     public static CompletableFuture<Long> submitGlobalCommand(final ApplicationCommand command, final ApplicationCommandListener listener) {
-        final CompletableFuture<Long> future = new CompletableFuture<>();
-        discordHttpClient.submitGlobalCommand(command).whenComplete((response, throwable) -> {
-            if (throwable != null) {
-                future.completeExceptionally(throwable);
-                return;
-            }
-
+        return discordHttpClient.submitGlobalCommand(command).thenApply(response -> {
+            final JsonObject object;
             try {
-                final JsonObject object = JsonParser.parseString(response.body().string()).getAsJsonObject();
-                future.complete(object.get("id").getAsLong());
-
-                commandMap.put(object.get("id").getAsLong(), command);
-                commandListenerMap.put(command, listener);
+                object = JsonParser.parseString(response.body().string()).getAsJsonObject();
             } catch (final IOException e) {
-                future.completeExceptionally(e);
+                throw new CompletionException(e);
             }
+
+            return object.get("id").getAsLong();
+        }).thenApply(commandId -> {
+            commandMap.put(commandId, command);
+            commandListenerMap.put(command, listener);
+            return commandId;
         });
-        return future;
     }
 
     /**
@@ -210,24 +200,20 @@ public class JDASlashCommands {
     public static CompletableFuture<Long> submitGuildCommand(final ApplicationCommand command,
                                                              final long guildId,
                                                              final ApplicationCommandListener listener) {
-        final CompletableFuture<Long> future = new CompletableFuture<>();
-        discordHttpClient.submitGuildCommand(command, guildId).whenComplete((response, throwable) -> {
-            if (throwable != null) {
-                future.completeExceptionally(throwable);
-                return;
-            }
-
+        return discordHttpClient.submitGuildCommand(command, guildId).thenApply(response -> {
+            final JsonObject object;
             try {
-                final JsonObject object = JsonParser.parseString(response.body().string()).getAsJsonObject();
-                future.complete(object.get("id").getAsLong());
-
-                commandMap.put(object.get("id").getAsLong(), command);
-                commandListenerMap.put(command, listener);
+                object = JsonParser.parseString(response.body().string()).getAsJsonObject();
             } catch (final IOException e) {
-                future.completeExceptionally(e);
+                throw new CompletionException(e);
             }
+
+            return object.get("id").getAsLong();
+        }).thenApply(commandId -> {
+            commandMap.put(commandId, command);
+            commandListenerMap.put(command, listener);
+            return commandId;
         });
-        return future;
     }
 
 
@@ -299,15 +285,7 @@ public class JDASlashCommands {
      * @return Nothing
      */
     public static CompletableFuture<Void> submitInteractionResponse(final Interaction interaction, final InteractionResponse response) {
-        return discordHttpClient.submitInteractionResponse(interaction, response).thenApply(r -> {
-            try {
-                System.out.println("interaction response stuff " + r.code());
-                System.out.println(r.body().string());
-            } catch (final IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        });
+        return discordHttpClient.submitInteractionResponse(interaction, response).thenApply(r -> null);
     }
 
     /**
@@ -318,21 +296,14 @@ public class JDASlashCommands {
      * @return The command
      */
     public static CompletableFuture<ApplicationCommand> getGlobalCommand(final long commandId) {
-        final CompletableFuture<ApplicationCommand> future = new CompletableFuture<>();
-        discordHttpClient.getGlobalCommand(commandId).whenComplete((response, throwable) -> {
-            if (throwable != null) {
-                future.completeExceptionally(throwable);
-                return;
-            }
-
+        return discordHttpClient.getGlobalCommand(commandId).thenApply(response -> {
             try {
-                future.complete(discordHttpClient.getGson().fromJson(JsonParser
-                        .parseString(response.body().string()), ApplicationCommand.class));
+                return discordHttpClient.getGson().fromJson(JsonParser
+                        .parseString(response.body().string()), ApplicationCommand.class);
             } catch (final IOException e) {
-                future.completeExceptionally(e);
+                throw new CompletionException(e);
             }
         });
-        return future;
     }
 
     /**
@@ -344,21 +315,14 @@ public class JDASlashCommands {
      * @return The command
      */
     public static CompletableFuture<ApplicationCommand> getGuildCommand(final long guildId, final long commandId) {
-        final CompletableFuture<ApplicationCommand> future = new CompletableFuture<>();
-        discordHttpClient.getGuildCommand(guildId, commandId).whenComplete((response, throwable) -> {
-            if (throwable != null) {
-                future.completeExceptionally(throwable);
-                return;
-            }
-
+        return discordHttpClient.getGuildCommand(guildId, commandId).thenApply(response -> {
             try {
-                future.complete(discordHttpClient.getGson().fromJson(JsonParser
-                        .parseString(response.body().string()), ApplicationCommand.class));
+                return discordHttpClient.getGson().fromJson(JsonParser
+                        .parseString(response.body().string()), ApplicationCommand.class);
             } catch (final IOException e) {
-                future.completeExceptionally(e);
+                throw new CompletionException(e);
             }
         });
-        return future;
     }
 
     /**
@@ -367,16 +331,7 @@ public class JDASlashCommands {
      * @return All global commands
      */
     public static CompletableFuture<List<ApplicationCommand>> getGlobalCommands() {
-        final CompletableFuture<List<ApplicationCommand>> future = new CompletableFuture<>();
-        discordHttpClient.getGlobalCommands().whenComplete((response, throwable) -> {
-            if (throwable != null) {
-                future.completeExceptionally(throwable);
-                return;
-            }
-
-            parseCommands(future, response);
-        });
-        return future;
+        return discordHttpClient.getGlobalCommands().thenApply(JDASlashCommands::parseCommands);
     }
 
     /**
@@ -391,16 +346,7 @@ public class JDASlashCommands {
     }
 
     public static CompletableFuture<List<ApplicationCommand>> getGuildCommands(final long guildId) {
-        final CompletableFuture<List<ApplicationCommand>> future = new CompletableFuture<>();
-        discordHttpClient.getGuildCommands(guildId).whenComplete((response, throwable) -> {
-            if (throwable != null) {
-                future.completeExceptionally(throwable);
-                return;
-            }
-
-            parseCommands(future, response);
-        });
-        return future;
+        return discordHttpClient.getGuildCommands(guildId).thenApply(JDASlashCommands::parseCommands);
     }
 
     public static CompletableFuture<Void> deleteGlobalCommand(final long commandId) {
@@ -414,10 +360,11 @@ public class JDASlashCommands {
     /**
      * Parse a response into commands
      *
-     * @param future
      * @param response
+     *
+     * @return
      */
-    private static void parseCommands(final CompletableFuture<List<ApplicationCommand>> future, final Response response) {
+    private static List<ApplicationCommand> parseCommands(final Response response) {
         final List<ApplicationCommand> list = new ArrayList<>();
         try {
             final JsonArray jsonArray = JsonParser.parseString(response.body().string()).getAsJsonArray();
@@ -425,10 +372,9 @@ public class JDASlashCommands {
                 list.add(discordHttpClient.getGson().fromJson(element, ApplicationCommand.class));
             }
         } catch (final IOException e) {
-            future.completeExceptionally(e);
-            return;
+            throw new CompletionException(e);
         }
-        future.complete(list);
+        return list;
     }
 
     /**
