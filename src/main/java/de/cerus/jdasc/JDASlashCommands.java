@@ -39,7 +39,6 @@ import net.dv8tion.jda.internal.entities.EntityBuilder;
 import okhttp3.Response;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
 
 public class JDASlashCommands {
 
@@ -462,14 +461,6 @@ public class JDASlashCommands {
     @ApiStatus.Internal
     public static ApplicationCommand getCommand(final long id) {
         return commandMap.get(id);
-    }
-
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval
-    @ApiStatus.Experimental
-    @TestOnly
-    public static DiscordHttpClient getDiscordHttpClient() {
-        return discordHttpClient;
     }
 
 }
