@@ -301,6 +301,7 @@ public class JDASlashCommands {
     public static CompletableFuture<Void> submitInteractionResponse(final Interaction interaction, final InteractionResponse response) {
         return discordHttpClient.submitInteractionResponse(interaction, response).thenApply(r -> {
             try {
+                System.out.println("interaction response stuff " + r.code());
                 System.out.println(r.body().string());
             } catch (final IOException e) {
                 e.printStackTrace();
