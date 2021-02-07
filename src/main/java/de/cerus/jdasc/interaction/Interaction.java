@@ -1,15 +1,18 @@
 package de.cerus.jdasc.interaction;
 
 import de.cerus.jdasc.JDASlashCommands;
+import de.cerus.jdasc.interaction.followup.FollowupMessage;
 import de.cerus.jdasc.interaction.response.InteractionApplicationCommandCallbackData;
 import de.cerus.jdasc.interaction.response.InteractionResponse;
 import de.cerus.jdasc.interaction.response.InteractionResponseOption;
 import de.cerus.jdasc.interaction.response.InteractionResponseType;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 
@@ -113,6 +116,42 @@ public class Interaction {
                         null
                 )
         ));
+    }
+
+    /**
+     * Submit a followup message
+     * This requires that you have at least acknowledged the interaction
+     *
+     * @param embeds The message content
+     *
+     * @return The sent message
+     */
+    public CompletableFuture<Message> sendFollowup(final MessageEmbed... embeds) {
+        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds)));
+    }
+
+    /**
+     * Submit a followup message
+     * This requires that you have at least acknowledged the interaction
+     *
+     * @param message The message content
+     *
+     * @return The sent message
+     */
+    public CompletableFuture<Message> sendFollowup(final String message) {
+        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>()));
+    }
+
+    /**
+     * Submit a followup message
+     * This requires that you have at least acknowledged the interaction
+     *
+     * @param message The message content
+     *
+     * @return The sent message
+     */
+    public CompletableFuture<Message> sendFollowup(final FollowupMessage message) {
+        return JDASlashCommands.submitFollowupMessage(this, message);
     }
 
     public boolean hasOption(final String name) {

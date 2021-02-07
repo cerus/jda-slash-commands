@@ -51,30 +51,92 @@ public class JDASlashCommands {
     private JDASlashCommands() {
     }
 
+    /**
+     * Delete a followup message
+     *
+     * @param interaction The interaction
+     * @param messageId   The id of your followup message
+     *
+     * @return A future
+     */
     public static CompletableFuture<Void> deleteFollowupMessage(final Interaction interaction, final long messageId) {
         return discordHttpClient.deleteFollowupMessage(interaction, messageId).thenApply(response -> null);
     }
 
+    /**
+     * Edit a followup message
+     *
+     * @param interaction The interaction
+     * @param embeds      The message content
+     * @param messageId   The id of your followup message
+     *
+     * @return A future
+     */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final MessageEmbed... embeds) {
         return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds)));
     }
 
+    /**
+     * Edit a followup message
+     *
+     * @param interaction The interaction
+     * @param message     The message content
+     * @param messageId   The id of your followup message
+     *
+     * @return A future
+     */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final String message) {
         return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>()));
     }
 
+    /**
+     * Edit a followup message
+     *
+     * @param interaction The interaction
+     * @param message     The message content
+     * @param messageId   The id of your followup message
+     *
+     * @return A future
+     */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final FollowupMessage message) {
         return discordHttpClient.editFollowupMessage(interaction, messageId, message).thenApply(response -> null);
     }
 
+    /**
+     * Submit a followup message
+     * This requires that you have at least acknowledged the interaction
+     *
+     * @param interaction The interaction
+     * @param embeds      The message content
+     *
+     * @return The sent message
+     */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final MessageEmbed... embeds) {
         return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds)));
     }
 
+    /**
+     * Submit a followup message
+     * This requires that you have at least acknowledged the interaction
+     *
+     * @param interaction The interaction
+     * @param message     The message content
+     *
+     * @return The sent message
+     */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final String message) {
         return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>()));
     }
 
+    /**
+     * Submit a followup message
+     * This requires that you have at least acknowledged the interaction
+     *
+     * @param interaction The interaction
+     * @param message     The message content
+     *
+     * @return The sent message
+     */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final FollowupMessage message) {
         final CompletableFuture<Message> future = new CompletableFuture<>();
         discordHttpClient.submitFollowupMessage(interaction, message).whenComplete((response, throwable) -> {
@@ -168,10 +230,61 @@ public class JDASlashCommands {
         return future;
     }
 
+
+    /**
+     * Delete your interaction response
+     *
+     * @param interaction The interaction
+     *
+     * @return A future
+     */
     public static CompletableFuture<Void> deleteInteractionResponse(final Interaction interaction) {
         return discordHttpClient.deleteInteractionResponse(interaction).thenApply(response -> null);
     }
 
+    /**
+     * Edit your interaction response
+     * Will produce a 404 if you did not send a response
+     *
+     * @param interaction The interaction
+     * @param embeds      The new message content (up to 10 embeds)
+     *
+     * @return A future
+     *
+     * @see JDASlashCommands#editInteractionResponse(Interaction, InteractionApplicationCommandCallbackData)
+     */
+    public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final MessageEmbed... embeds) {
+        return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
+                false, "", Arrays.asList(embeds)
+        ));
+    }
+
+    /**
+     * Edit your interaction response
+     * Will produce a 404 if you did not send a response
+     *
+     * @param interaction The interaction
+     * @param message     The new message content
+     *
+     * @return A future
+     *
+     * @see JDASlashCommands#editInteractionResponse(Interaction, InteractionApplicationCommandCallbackData)
+     */
+    public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final String message) {
+        return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
+                false, message, new ArrayList<>()
+        ));
+    }
+
+    /**
+     * Edit your interaction response
+     * Will produce a 404 if you did not send a response
+     *
+     * @param interaction The interaction
+     * @param data        The message data
+     *
+     * @return A future
+     */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction,
                                                                   final InteractionApplicationCommandCallbackData data) {
         return discordHttpClient.editInteractionResponse(interaction, data).thenApply(response -> null);
@@ -186,15 +299,14 @@ public class JDASlashCommands {
      * @return Nothing
      */
     public static CompletableFuture<Void> submitInteractionResponse(final Interaction interaction, final InteractionResponse response) {
-        final CompletableFuture<Void> future = new CompletableFuture<>();
-        discordHttpClient.submitInteractionResponse(interaction, response).whenComplete((rsp, t) -> {
-            if (t != null) {
-                future.completeExceptionally(t);
-            } else {
-                future.complete(null);
+        return discordHttpClient.submitInteractionResponse(interaction, response).thenApply(r -> {
+            try {
+                System.out.println(r.body().string());
+            } catch (final IOException e) {
+                e.printStackTrace();
             }
+            return null;
         });
-        return future;
     }
 
     /**
