@@ -52,7 +52,12 @@ public class MyBot {
     private static final String BOT_TOKEN = "********";
     private static final String APPLICATION_ID = "12345654321";
 
-    public void initCommands() {
+    public static void main(String[] args) {
+        JDA jda = JDABuilder.createDefault(BOT_TOKEN).build();
+        initCommands(jda);
+    }
+
+    public void initCommands(JDA jda) {
         JDASlashCommands.initialize(jda, BOT_TOKEN, APPLICATION_ID);
         JDASlashCommands.submitGlobalCommand(new CommandBuilder()
                 .name("test-command") // Set command name to '/test-command'
