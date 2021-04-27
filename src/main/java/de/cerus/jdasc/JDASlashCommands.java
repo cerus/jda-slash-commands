@@ -408,8 +408,13 @@ public class JDASlashCommands {
     public static void handleInteraction(final Interaction interaction) {
         final ApplicationCommand command = commandMap.get(interaction.getCommandId());
         final ApplicationCommandListener listener = commandListenerMap.get(command);
-        listener.onInteraction(interaction);
 
+        if (command == null || listener == null) {
+            // Discord sent us a command that wasn't registered. We can't do anything about that so we just do nothing
+            return;
+        }
+
+        listener.onInteraction(interaction);
         final InteractionResponseOption argument = findArgument(command, interaction);
         if (argument != null) {
             listener.handleArgument(interaction, argument.getName(), argument);
