@@ -79,7 +79,7 @@ public class DiscordHttpClient {
 
         return this.execute(new Request.Builder()
                 .url(String.format("https://discord.com/api/v8/webhooks/%s/%s/messages/%d", this.applicationId, interaction.getToken(), messageId))
-                .patch(RequestBody.create(body, MediaType.get("application/json; charset=utf-8")))
+                .patch(RequestBody.create(MediaType.get("application/json; charset=utf-8"), body))
                 .addHeader("Authorization", "Bot " + this.botToken)
                 .build(), 200, 204);
     }
@@ -88,7 +88,7 @@ public class DiscordHttpClient {
         final String body = this.gson.toJson(message);
         return this.execute(new Request.Builder()
                 .url(String.format("https://discord.com/api/v8/webhooks/%s/%s", this.applicationId, interaction.getToken()))
-                .post(RequestBody.create(body, MediaType.get("application/json; charset=utf-8")))
+                .post(RequestBody.create( MediaType.get("application/json; charset=utf-8"), body))
                 .addHeader("Authorization", "Bot " + this.botToken)
                 .build(), 200, 204, 201);
     }
@@ -107,7 +107,7 @@ public class DiscordHttpClient {
         final String body = payload.toString();
         return this.execute(new Request.Builder()
                 .url(String.format("https://discord.com/api/v8/webhooks/%s/%s/messages/@original", this.applicationId, interaction.getToken()))
-                .patch(RequestBody.create(body, MediaType.get("application/json; charset=utf-8")))
+                .patch(RequestBody.create(MediaType.get("application/json; charset=utf-8"), body))
                 .addHeader("Authorization", "Bot " + this.botToken)
                 .build(), 200, 204);
     }
@@ -116,7 +116,7 @@ public class DiscordHttpClient {
         final String body = this.gson.toJson(response);
         return this.execute(new Request.Builder()
                 .url(String.format("https://discord.com/api/v8/interactions/%d/%s/callback", interaction.getId(), interaction.getToken()))
-                .post(RequestBody.create(body, MediaType.get("application/json; charset=utf-8")))
+                .post(RequestBody.create( MediaType.get("application/json; charset=utf-8"), body))
                 .addHeader("Authorization", "Bot " + this.botToken)
                 .build(), 200, 204);
     }
@@ -124,7 +124,7 @@ public class DiscordHttpClient {
     public CompletableFuture<Response> submitGlobalCommand(final ApplicationCommand command) {
         return this.execute(new Request.Builder()
                 .url(String.format("https://discord.com/api/v8/applications/%s/commands", this.applicationId))
-                .post(RequestBody.create(this.gson.toJson(command), MediaType.get("application/json; charset=utf-8")))
+                .post(RequestBody.create(MediaType.get("application/json; charset=utf-8"), this.gson.toJson(command)))
                 .addHeader("Authorization", "Bot " + this.botToken)
                 .build(), 200, 201);
     }
@@ -139,7 +139,7 @@ public class DiscordHttpClient {
     public CompletableFuture<Response> submitGuildCommand(final ApplicationCommand command, final long guildId) {
         return this.execute(new Request.Builder()
                 .url(String.format("https://discord.com/api/v8/applications/%s/guilds/%d/commands", this.applicationId, guildId))
-                .post(RequestBody.create(this.gson.toJson(command), MediaType.get("application/json; charset=utf-8")))
+                .post(RequestBody.create(MediaType.get("application/json; charset=utf-8"), this.gson.toJson(command)))
                 .addHeader("Authorization", "Bot " + this.botToken)
                 .build(), 200, 201);
     }
