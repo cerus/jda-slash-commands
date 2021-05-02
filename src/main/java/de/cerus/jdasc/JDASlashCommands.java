@@ -240,7 +240,7 @@ public class JDASlashCommands {
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final MessageEmbed... embeds) {
         return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
-                false, "", Arrays.asList(embeds)
+                false, "", Arrays.asList(embeds), 0
         ));
     }
 
@@ -257,7 +257,24 @@ public class JDASlashCommands {
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final String message) {
         return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
-                false, message, new ArrayList<>()
+                false, message, new ArrayList<>(), 0
+        ));
+    }
+    /**
+     * Edit your interaction response
+     * Will produce a 404 if you did not send a response
+     *
+     * @param interaction The interaction
+     * @param message     The new message content
+     * @param flags       The flags (set to 64 if you want to make commands private)
+     *
+     * @return A future
+     *
+     * @see JDASlashCommands#editInteractionResponse(Interaction, InteractionApplicationCommandCallbackData)
+     */
+    public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final String message, int flags) {
+        return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
+                false, message, new ArrayList<>(), flags
         ));
     }
 
@@ -415,9 +432,9 @@ public class JDASlashCommands {
         }
 
         listener.onInteraction(interaction);
-        final InteractionResponseOption argument = findArgument(command, interaction);
-        if (argument != null) {
-            listener.handleArgument(interaction, argument.getName(), argument);
+        final List<InteractionResponseOption> arguments = findArguments(command, interaction);
+        if (arguments != null && !arguments.isEmpty()) {
+            listener.handleArguments(interaction, arguments);
         }
     }
 
@@ -429,7 +446,7 @@ public class JDASlashCommands {
      *
      * @return A argument or null
      */
-    private static InteractionResponseOption findArgument(final ApplicationCommand command, final Interaction interaction) {
+    private static List<InteractionResponseOption> findArguments(final ApplicationCommand command, final Interaction interaction) {
         final List<ApplicationCommandOption> cmdOptions = new ArrayList<>();
         walkList(cmdOptions, command.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, ApplicationCommandOption::getOptions);
         final Set<String> argNames = cmdOptions.stream()
@@ -442,8 +459,7 @@ public class JDASlashCommands {
         walkList(rspOptions, interaction.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, InteractionResponseOption::getOptions);
         return rspOptions.stream()
                 .filter(option -> argNames.contains(option.getName()))
-                .findAny()
-                .orElse(null);
+                .collect(Collectors.toList());
     }
 
     private static <T> void walkList(final List<T> output, final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
