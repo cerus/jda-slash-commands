@@ -462,7 +462,8 @@ public class JDASlashCommands {
                 .collect(Collectors.toList());
     }
 
-    private static <T> void walkList(final List<T> output, final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
+
+    private static <T> void walkList(final List<T> output, @NotNull final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
         for (final T item : list) {
             if (predicate.test(item)) {
                 walkList(output, function.apply(item), predicate, function);
