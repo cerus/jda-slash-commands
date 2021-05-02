@@ -8,6 +8,8 @@ import de.cerus.jdasc.command.ApplicationCommand;
 import de.cerus.jdasc.command.ApplicationCommandListener;
 import de.cerus.jdasc.command.ApplicationCommandOption;
 import de.cerus.jdasc.command.ApplicationCommandOptionType;
+import de.cerus.jdasc.command.permissions.ApplicationCommandPermissions;
+import de.cerus.jdasc.command.permissions.GuildApplicationCommandPermissions;
 import de.cerus.jdasc.http.DiscordHttpClient;
 import de.cerus.jdasc.interaction.Interaction;
 import de.cerus.jdasc.interaction.followup.FollowupMessage;
@@ -339,6 +341,51 @@ public class JDASlashCommands {
                 throw new CompletionException(e);
             }
         });
+    }
+
+    /**
+     * Retrieve a guild commands permissions
+     *
+     * @param guildId   The id of the guild
+     * @param commandId The id of the command
+     *
+     * @return The command's permissions
+     */
+    public static CompletableFuture<GuildApplicationCommandPermissions> getGuildCommandPermissions(final long guildId, final long commandId) {
+        return discordHttpClient.getApplicationCommandPermissions(guildId, commandId).thenApply(response -> {
+            try {
+                return discordHttpClient.getGson().fromJson(JsonParser
+                        .parseString(response.body().string()), GuildApplicationCommandPermissions.class);
+            } catch (final IOException e) {
+                throw new CompletionException(e);
+            }
+        });
+    }
+
+    /**
+     * Edit a guild commands permissions
+     *
+     * @param guildId   The id of the guild
+     * @param commandId The id of the command
+     * @param permissions The permissions
+     *
+     * @return The command's permissions
+     */
+    public static CompletableFuture<Void> editGuildCommandPermissions(final long guildId, final long commandId, ApplicationCommandPermissions... permissions) {
+        return editGuildCommandPermissions(guildId, commandId, Arrays.asList(permissions));
+    }
+
+    /**
+     * Edit  a guild commands permissions
+     *
+     * @param guildId   The id of the guild
+     * @param commandId The id of the command
+     * @param permissions The permissions
+     *
+     * @return The command's permissions
+     */
+    public static CompletableFuture<Void> editGuildCommandPermissions(final long guildId, final long commandId, List<ApplicationCommandPermissions> permissions) {
+        return discordHttpClient.editApplicationCommandPermissions(guildId, commandId, permissions).thenApply(response -> null);
     }
 
     /**

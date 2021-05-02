@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import de.cerus.jdasc.command.ApplicationCommand;
 import de.cerus.jdasc.command.ApplicationCommandOptionType;
+import de.cerus.jdasc.command.permissions.ApplicationCommandPermissions;
 import de.cerus.jdasc.gson.ApplicationCommandOptionTypeTypeAdapter;
 import de.cerus.jdasc.gson.InteractionResponseTypeAdapter;
 import de.cerus.jdasc.gson.InteractionResponseTypeTypeAdapter;
@@ -16,6 +17,7 @@ import de.cerus.jdasc.interaction.response.InteractionResponse;
 import de.cerus.jdasc.interaction.response.InteractionResponseType;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -182,6 +184,24 @@ public class DiscordHttpClient {
                 .get()
                 .addHeader("Authorization", "Bot " + this.botToken)
                 .build(), 200);
+    }
+
+    public CompletableFuture<Response> getApplicationCommandPermissions(final long guildId, final long commandId) {
+        return this.execute(new Request.Builder()
+                .url(String.format("https://discord.com/api/v8/applications/%s/guilds/%d/commands/%s/permissions", this.applicationId, guildId, commandId))
+                .get()
+                .addHeader("Authorization", "Bot " + this.botToken)
+                .build(), 200);
+    }
+
+    public CompletableFuture<Response> editApplicationCommandPermissions(final long guildId, final long commandId, final List<ApplicationCommandPermissions> permissions) {
+        final JsonObject payload = this.gson.toJsonTree(permissions).getAsJsonObject();
+        final String body = payload.toString();
+        return this.execute(new Request.Builder()
+                .url(String.format("https://discord.com/api/v8/applications/%s/guilds/%d/commands/%s/permissions", this.applicationId, guildId, commandId))
+                .patch(RequestBody.create(MediaType.get("application/json; charset=utf-8"), body))
+                .addHeader("Authorization", "Bot " + this.botToken)
+                .build(), 200, 204);
     }
 
     private CompletableFuture<Response> execute(final Request request, final int... expectedCodes) {
