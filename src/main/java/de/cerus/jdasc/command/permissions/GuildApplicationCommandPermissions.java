@@ -4,14 +4,14 @@ import java.util.List;
 
 public class GuildApplicationCommandPermissions {
     private final long id;
-    private final long application_id;
-    private final long guild_id;
+    private final long applicationId;
+    private final long guildId;
     private final List<ApplicationCommandPermissions> permissions;
 
-    public GuildApplicationCommandPermissions(long id, long application_id, long guild_id, List<ApplicationCommandPermissions> permissions) {
+    public GuildApplicationCommandPermissions(long id, long applicationId, long guildId, List<ApplicationCommandPermissions> permissions) {
         this.id = id;
-        this.application_id = application_id;
-        this.guild_id = guild_id;
+        this.applicationId = applicationId;
+        this.guildId = guildId;
         this.permissions = permissions;
     }
 
@@ -24,10 +24,10 @@ public class GuildApplicationCommandPermissions {
     }
 
     public long getApplicationId() {
-        return application_id;
+        return applicationId;
     }
 
     public long getGuildId() {
-        return guild_id;
+        return guildId;
     }
 }
