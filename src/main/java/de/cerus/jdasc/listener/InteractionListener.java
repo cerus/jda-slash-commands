@@ -46,7 +46,7 @@ public class InteractionListener extends ListenerAdapter {
 
             final JDA jda = event.getJDA();
             final Guild guild = jda.getGuildById(object.get("guild_id").getAsString());
-            final Member member = guild.getMemberById(object.get("member").getAsJsonObject().get("user").getAsJsonObject().get("id").getAsString());
+            final Member member = guild.retrieveMemberById(object.get("member").getAsJsonObject().get("user").getAsJsonObject().get("id").getAsString()).complete();
             final TextChannel textChannel = guild.getTextChannelById(object.get("channel_id").getAsString());
 
             final Interaction interaction = new Interaction(token, id, type, commandId, commandName, guild, textChannel, member, options);
