@@ -510,14 +510,18 @@ public class JDASlashCommands {
     }
 
 
-    private static <T> void walkList(final List<T> output, @NotNull final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
-        for (final T item : list) {
-            if (predicate.test(item)) {
-                walkList(output, function.apply(item), predicate, function);
-            } else {
-                output.add(item);
+    private static <T> void walkList(final List<T> output,  final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
+        //Yes this is a bad practice, but idk whats null lol
+        try {
+            for (final T item : list) {
+                if (predicate.test(item)) {
+                    walkList(output, function.apply(item), predicate, function);
+                } else {
+                    output.add(item);
+                }
             }
-        }
+        }catch (NullPointerException ignored){ }
+
     }
 
     /**
