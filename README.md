@@ -2,14 +2,13 @@
 
 [Slash commands](https://discord.com/developers/docs/interactions/slash-commands) for [JDA](https://github.com/DV8FromTheWorld/JDA)
 
-## Note
-
-**This library is using Java 11!**
 
 This library is only a temporary solution until JDA officially supports slash commands. I decided against contributing to JDA because I don't want to
 mess up their code base.
 
-This library is also lacking some documentation. If you have any questions feel free to open a issue or contact me.
+This library is also lacking some documentation. If you have any questions feel free to open an issue.
+
+
 
 ## Features
 
@@ -17,34 +16,10 @@ This library is also lacking some documentation. If you have any questions feel 
 - Interactions
 - Interactions responses
 - Followup messages
+- Command permissions
 - [Command routers](https://github.com/cerus/jda-slash-commands/wiki/Command-Routers) (Automatically route interactions to your command framework)
 
 ## Example
-
-<details>
-  <summary>Installation with Maven</summary>
-
-  ```xml
-
-<project>
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.github.cerus</groupId>
-            <artifactId>jda-slash-commands</artifactId>
-            <version>TAG</version>
-        </dependency>
-    </dependencies>
-</project>
-  ```
-
-</details>
 
 ```java
 public class MyBot {
@@ -53,7 +28,7 @@ public class MyBot {
     private static final String APPLICATION_ID = "12345654321";
 
     public static void main(String[] args) {
-        JDA jda = JDABuilder.createDefault(BOT_TOKEN).build();
+        JDA jda = JDABuilder.setRawEventsEnabled(true).createDefault(BOT_TOKEN).build();
         initCommands(jda);
     }
 
@@ -95,18 +70,6 @@ public class MyBot {
                 System.out.println("We got an interaction! Yay!");
             }
 
-            @Override
-            public void handleArgument(final Interaction interaction, final String argumentName, final InteractionResponseOption option) {
-                switch (argumentName) {
-                    case "user":
-                        interaction.respond(false, "Hello, " + jda.getUserById(Long.parseLong(option.getValue())).getAsMention());
-                        break;
-                    case "animal":
-                        interaction.respond(false, "Here's your imaginary picture of a " + option.getValue());
-                        break;
-                }
-            }
-
         });
     }
 
@@ -127,3 +90,39 @@ public class MyBot {
 ![Animal Response](https://i.imgur.com/6sEOMBk.png)
 
 </details>
+
+## Installation
+
+**Maven**
+``` xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+	
+<!--Replace TAG with the version-->
+<dependency>
+    <groupId>com.github.cerus</groupId>
+    <artifactId>jda-slash-commands</artifactId>
+    <version>Tag</version>
+</dependency>
+
+```
+
+**Gradle**
+
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    implementation 'com.github.cerus:jda-slash-commands:TAG'
+}
+
+```
