@@ -11,13 +11,15 @@ public class FollowupMessage {
     private final String content;
     private final boolean tts;
     private final List<MessageEmbed> embeds;
+    private final int flags;
 
     public FollowupMessage(final String content,
                            final boolean tts,
-                           final List<MessageEmbed> embeds) {
+                           final List<MessageEmbed> embeds, int flags) {
         this.content = content;
         this.tts = tts;
         this.embeds = embeds;
+        this.flags = flags;
     }
 
     public String getContent() {

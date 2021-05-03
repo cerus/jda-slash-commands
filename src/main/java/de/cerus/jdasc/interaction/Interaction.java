@@ -200,7 +200,20 @@ public class Interaction {
      * @return The sent message
      */
     public CompletableFuture<Message> sendFollowup(final MessageEmbed... embeds) {
-        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds)));
+        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), 0));
+    }
+
+    /**
+     * Submit a followup message
+     * This requires that you have at least acknowledged the interaction
+     *
+     * @param flags The discord flags
+     * @param embeds The message content
+     *
+     * @return The sent message
+     */
+    public CompletableFuture<Message> sendFollowup(final int flags, final MessageEmbed... embeds) {
+        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), flags));
     }
 
     /**
@@ -212,7 +225,19 @@ public class Interaction {
      * @return The sent message
      */
     public CompletableFuture<Message> sendFollowup(final String message) {
-        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>()));
+        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), 0));
+    }
+
+    /**
+     * Submit a followup message
+     * This requires that you have at least acknowledged the interaction
+     * @param flags The message flags
+     * @param message The message content
+     *
+     * @return The sent message
+     */
+    public CompletableFuture<Message> sendFollowup(final String message, final int flags) {
+        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), flags));
     }
 
     /**

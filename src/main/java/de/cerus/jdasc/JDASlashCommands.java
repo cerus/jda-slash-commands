@@ -69,7 +69,20 @@ public class JDASlashCommands {
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final MessageEmbed... embeds) {
-        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds)));
+        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds), 0));
+    }
+
+    /**
+     * Edit a followup message
+     *
+     * @param interaction The interaction
+     * @param embeds      The message content
+     * @param messageId   The id of your followup message
+     * @param flags       The flags
+     * @return A future
+     */
+    public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId,final int flags,  final MessageEmbed... embeds) {
+        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds), flags));
     }
 
     /**
@@ -81,7 +94,20 @@ public class JDASlashCommands {
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final String message) {
-        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>()));
+        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>(), 0));
+    }
+
+    /**
+     * Edit a followup message
+     *
+     * @param interaction The interaction
+     * @param message     The message content
+     * @param messageId   The id of your followup message
+     * @param flags       The discord flags
+     * @return A future
+     */
+    public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final String message, final int flags) {
+        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>(), flags));
     }
 
     /**
@@ -105,7 +131,20 @@ public class JDASlashCommands {
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final MessageEmbed... embeds) {
-        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds)));
+        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds), 0));
+    }
+
+    /**
+     * Submit a followup message
+     * This requires that you have at least acknowledged the interaction
+     *
+     * @param interaction The interaction
+     * @param flags       The discord flags
+     * @param embeds      The message content
+     * @return The sent message
+     */
+    public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction,final int flags,  final MessageEmbed... embeds) {
+        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds), flags));
     }
 
     /**
@@ -117,7 +156,20 @@ public class JDASlashCommands {
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final String message) {
-        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>()));
+        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>(), 0));
+    }
+
+    /**
+     * Submit a followup message
+     * This requires that you have at least acknowledged the interaction
+     *
+     * @param flags       The discord flags
+     * @param interaction The interaction
+     * @param message     The message content
+     * @return The sent message
+     */
+    public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final String message, final int flags) {
+        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>(), flags));
     }
 
     /**
