@@ -3,6 +3,9 @@ package de.cerus.jdasc.command;
 import de.cerus.jdasc.interaction.Interaction;
 import de.cerus.jdasc.interaction.response.InteractionResponseOption;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Represents a basic listener
  */
@@ -19,10 +22,9 @@ public interface ApplicationCommandListener {
      * Gets called if a argument was specified
      *
      * @param interaction  The interaction
-     * @param argumentName The name of the argument
-     * @param option       The actual argument
+     * @param options       The list of arguments.
      */
-    default void handleArgument(final Interaction interaction, final String argumentName, final InteractionResponseOption option) {
+    default void handleArguments(final Interaction interaction, final Map<String, InteractionResponseOption> options) {
     }
 
 }
