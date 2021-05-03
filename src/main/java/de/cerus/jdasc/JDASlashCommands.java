@@ -534,7 +534,6 @@ public class JDASlashCommands {
     }
 
 
-    //TODO: figure out whats null
     private static <T> void walkList(final List<T> output, final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
         if(list == null){
             return;
