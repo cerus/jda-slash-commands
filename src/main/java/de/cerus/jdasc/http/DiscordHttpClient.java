@@ -34,7 +34,7 @@ import okhttp3.Response;
 public class DiscordHttpClient {
 
     private final Gson gson;
-    private final String applicationId;
+    public final String applicationId;
     private final String botToken;
     private final ExecutorService executorService;
     private final OkHttpClient httpClient;

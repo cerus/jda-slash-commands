@@ -17,18 +17,6 @@ import de.cerus.jdasc.interaction.response.InteractionApplicationCommandCallback
 import de.cerus.jdasc.interaction.response.InteractionResponse;
 import de.cerus.jdasc.interaction.response.InteractionResponseOption;
 import de.cerus.jdasc.listener.InteractionListener;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
@@ -41,6 +29,14 @@ import net.dv8tion.jda.internal.entities.EntityBuilder;
 import okhttp3.Response;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class JDASlashCommands {
 
@@ -58,7 +54,6 @@ public class JDASlashCommands {
      *
      * @param interaction The interaction
      * @param messageId   The id of your followup message
-     *
      * @return A future
      */
     public static CompletableFuture<Void> deleteFollowupMessage(final Interaction interaction, final long messageId) {
@@ -71,7 +66,6 @@ public class JDASlashCommands {
      * @param interaction The interaction
      * @param embeds      The message content
      * @param messageId   The id of your followup message
-     *
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final MessageEmbed... embeds) {
@@ -84,7 +78,6 @@ public class JDASlashCommands {
      * @param interaction The interaction
      * @param message     The message content
      * @param messageId   The id of your followup message
-     *
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final String message) {
@@ -97,7 +90,6 @@ public class JDASlashCommands {
      * @param interaction The interaction
      * @param message     The message content
      * @param messageId   The id of your followup message
-     *
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final FollowupMessage message) {
@@ -110,7 +102,6 @@ public class JDASlashCommands {
      *
      * @param interaction The interaction
      * @param embeds      The message content
-     *
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final MessageEmbed... embeds) {
@@ -123,7 +114,6 @@ public class JDASlashCommands {
      *
      * @param interaction The interaction
      * @param message     The message content
-     *
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final String message) {
@@ -136,7 +126,6 @@ public class JDASlashCommands {
      *
      * @param interaction The interaction
      * @param message     The message content
-     *
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final FollowupMessage message) {
@@ -154,7 +143,6 @@ public class JDASlashCommands {
      *
      * @param command  The command you'd like to create / update
      * @param listener The interaction listener
-     *
      * @return The command id
      */
     public static CompletableFuture<Long> submitGlobalCommand(final ApplicationCommand command, final ApplicationCommandListener listener) {
@@ -180,7 +168,6 @@ public class JDASlashCommands {
      * @param command  The command you'd like to create / update
      * @param guild    The guild that should have access to this command
      * @param listener The interaction listener
-     *
      * @return The command id
      */
     public static CompletableFuture<Long> submitGuildCommand(final ApplicationCommand command,
@@ -195,7 +182,6 @@ public class JDASlashCommands {
      * @param command  The command you'd like to create / update
      * @param guildId  The id of the guild that should have access to this command
      * @param listener The interaction listener
-     *
      * @return The command id
      */
     public static CompletableFuture<Long> submitGuildCommand(final ApplicationCommand command,
@@ -222,7 +208,6 @@ public class JDASlashCommands {
      * Delete your interaction response
      *
      * @param interaction The interaction
-     *
      * @return A future
      */
     public static CompletableFuture<Void> deleteInteractionResponse(final Interaction interaction) {
@@ -235,9 +220,7 @@ public class JDASlashCommands {
      *
      * @param interaction The interaction
      * @param embeds      The new message content (up to 10 embeds)
-     *
      * @return A future
-     *
      * @see JDASlashCommands#editInteractionResponse(Interaction, InteractionApplicationCommandCallbackData)
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final MessageEmbed... embeds) {
@@ -252,9 +235,7 @@ public class JDASlashCommands {
      *
      * @param interaction The interaction
      * @param message     The new message content
-     *
      * @return A future
-     *
      * @see JDASlashCommands#editInteractionResponse(Interaction, InteractionApplicationCommandCallbackData)
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final String message) {
@@ -262,6 +243,7 @@ public class JDASlashCommands {
                 false, message, new ArrayList<>(), 0
         ));
     }
+
     /**
      * Edit your interaction response
      * Will produce a 404 if you did not send a response
@@ -269,9 +251,7 @@ public class JDASlashCommands {
      * @param interaction The interaction
      * @param message     The new message content
      * @param flags       The flags (set to 64 if you want to make commands private)
-     *
      * @return A future
-     *
      * @see JDASlashCommands#editInteractionResponse(Interaction, InteractionApplicationCommandCallbackData)
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final String message, int flags) {
@@ -286,7 +266,6 @@ public class JDASlashCommands {
      *
      * @param interaction The interaction
      * @param data        The message data
-     *
      * @return A future
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction,
@@ -299,7 +278,6 @@ public class JDASlashCommands {
      *
      * @param interaction The interaction that you want to respond to
      * @param response    Your response
-     *
      * @return Nothing
      */
     public static CompletableFuture<Void> submitInteractionResponse(final Interaction interaction, final InteractionResponse response) {
@@ -310,7 +288,6 @@ public class JDASlashCommands {
      * Retrieve a global command
      *
      * @param commandId The id of the command
-     *
      * @return The command
      */
     public static CompletableFuture<ApplicationCommand> getGlobalCommand(final long commandId) {
@@ -329,7 +306,6 @@ public class JDASlashCommands {
      *
      * @param guildId   The id of the guild
      * @param commandId The id of the command
-     *
      * @return The command
      */
     public static CompletableFuture<ApplicationCommand> getGuildCommand(final long guildId, final long commandId) {
@@ -348,14 +324,15 @@ public class JDASlashCommands {
      *
      * @param guildId   The id of the guild
      * @param commandId The id of the command
-     *
      * @return The command's permissions
      */
     public static CompletableFuture<GuildApplicationCommandPermissions> getGuildCommandPermissions(final long guildId, final long commandId) {
         return discordHttpClient.getApplicationCommandPermissions(guildId, commandId).thenApply(response -> {
             try {
-                return discordHttpClient.getGson().fromJson(JsonParser
-                        .parseString(response.body().string()), GuildApplicationCommandPermissions.class);
+                if (response.code() == 404) {
+                    return new GuildApplicationCommandPermissions(commandId, Long.parseLong(discordHttpClient.applicationId), guildId, new ArrayList<>());
+                }
+                return discordHttpClient.getGson().fromJson(JsonParser.parseString(response.body().string()), GuildApplicationCommandPermissions.class);
             } catch (final IOException e) {
                 throw new CompletionException(e);
             }
@@ -365,10 +342,9 @@ public class JDASlashCommands {
     /**
      * Edit a guild commands permissions
      *
-     * @param guildId   The id of the guild
-     * @param commandId The id of the command
+     * @param guildId     The id of the guild
+     * @param commandId   The id of the command
      * @param permissions The permissions
-     *
      * @return The command's permissions
      */
     public static CompletableFuture<Void> editGuildCommandPermissions(final long guildId, final long commandId, ApplicationCommandPermissions... permissions) {
@@ -378,10 +354,9 @@ public class JDASlashCommands {
     /**
      * Edit  a guild commands permissions
      *
-     * @param guildId   The id of the guild
-     * @param commandId The id of the command
+     * @param guildId     The id of the guild
+     * @param commandId   The id of the command
      * @param permissions The permissions
-     *
      * @return The command's permissions
      */
     public static CompletableFuture<Void> editGuildCommandPermissions(final long guildId, final long commandId, List<ApplicationCommandPermissions> permissions) {
@@ -401,7 +376,6 @@ public class JDASlashCommands {
      * Retrieve all guild commands of a specific guild
      *
      * @param guild The guild
-     *
      * @return The guild commands
      */
     public static CompletableFuture<List<ApplicationCommand>> getGuildCommands(final Guild guild) {
@@ -424,7 +398,6 @@ public class JDASlashCommands {
      * Parse a response into commands
      *
      * @param response
-     *
      * @return
      */
     private static List<ApplicationCommand> parseCommands(final Response response) {
@@ -479,7 +452,7 @@ public class JDASlashCommands {
         }
 
         listener.onInteraction(interaction);
-        final List<InteractionResponseOption> arguments = findArguments(command, interaction);
+        final Map<String, InteractionResponseOption> arguments = findArguments(command, interaction);
         if (arguments != null && !arguments.isEmpty()) {
             listener.handleArguments(interaction, arguments);
         }
@@ -490,10 +463,9 @@ public class JDASlashCommands {
      *
      * @param command     The command
      * @param interaction The interaction
-     *
      * @return A argument or null
      */
-    private static List<InteractionResponseOption> findArguments(final ApplicationCommand command, final Interaction interaction) {
+    private static Map<String, InteractionResponseOption> findArguments(final ApplicationCommand command, final Interaction interaction) {
         final List<ApplicationCommandOption> cmdOptions = new ArrayList<>();
         walkList(cmdOptions, command.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, ApplicationCommandOption::getOptions);
         final Set<String> argNames = cmdOptions.stream()
@@ -506,11 +478,11 @@ public class JDASlashCommands {
         walkList(rspOptions, interaction.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, InteractionResponseOption::getOptions);
         return rspOptions.stream()
                 .filter(option -> argNames.contains(option.getName()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(InteractionResponseOption::getName, interactionResponseOption -> interactionResponseOption));
     }
 
 
-    private static <T> void walkList(final List<T> output,  final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
+    private static <T> void walkList(final List<T> output, final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
         //Yes this is a bad practice, but idk whats null lol
         try {
             for (final T item : list) {
@@ -520,7 +492,8 @@ public class JDASlashCommands {
                     output.add(item);
                 }
             }
-        }catch (NullPointerException ignored){ }
+        } catch (NullPointerException ignored) {
+        }
 
     }
 
@@ -528,7 +501,6 @@ public class JDASlashCommands {
      * Get a command by id
      *
      * @param id The command id
-     *
      * @return The command
      */
     @ApiStatus.Internal

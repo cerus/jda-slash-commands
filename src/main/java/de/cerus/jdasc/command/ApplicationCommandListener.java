@@ -4,6 +4,7 @@ import de.cerus.jdasc.interaction.Interaction;
 import de.cerus.jdasc.interaction.response.InteractionResponseOption;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a basic listener
@@ -23,7 +24,7 @@ public interface ApplicationCommandListener {
      * @param interaction  The interaction
      * @param options       The list of arguments.
      */
-    default void handleArguments(final Interaction interaction, final List<InteractionResponseOption> options) {
+    default void handleArguments(final Interaction interaction, final Map<String, InteractionResponseOption> options) {
     }
 
 }
