@@ -517,7 +517,7 @@ public class JDASlashCommands {
      * @param interaction The interaction
      * @return A argument or null
      */
-    private static Map<String, InteractionResponseOption> findArguments(final ApplicationCommand command, final Interaction interaction) {
+    public static Map<String, InteractionResponseOption> findArguments(final ApplicationCommand command, final Interaction interaction) {
         final List<ApplicationCommandOption> cmdOptions = new ArrayList<>();
         walkList(cmdOptions, command.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, ApplicationCommandOption::getOptions);
         final Set<String> argNames = cmdOptions.stream()
