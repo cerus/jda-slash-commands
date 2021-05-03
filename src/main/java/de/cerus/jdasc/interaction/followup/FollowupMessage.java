@@ -15,7 +15,8 @@ public class FollowupMessage {
 
     public FollowupMessage(final String content,
                            final boolean tts,
-                           final List<MessageEmbed> embeds, int flags) {
+                           final List<MessageEmbed> embeds,
+                           int flags) {
         this.content = content;
         this.tts = tts;
         this.embeds = embeds;

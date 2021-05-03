@@ -81,7 +81,7 @@ public class JDASlashCommands {
      * @param flags       The flags
      * @return A future
      */
-    public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId,final int flags,  final MessageEmbed... embeds) {
+    public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final int flags, final MessageEmbed... embeds) {
         return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds), flags));
     }
 
@@ -143,7 +143,7 @@ public class JDASlashCommands {
      * @param embeds      The message content
      * @return The sent message
      */
-    public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction,final int flags,  final MessageEmbed... embeds) {
+    public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final int flags, final MessageEmbed... embeds) {
         return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds), flags));
     }
 
@@ -534,17 +534,17 @@ public class JDASlashCommands {
     }
 
 
+    //TODO: figure out whats null
     private static <T> void walkList(final List<T> output, final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
-        //Yes this is a bad practice, but idk whats null lol
-        try {
-            for (final T item : list) {
-                if (predicate.test(item)) {
-                    walkList(output, function.apply(item), predicate, function);
-                } else {
-                    output.add(item);
-                }
+        if(list == null){
+            return;
+        }
+        for (final T item : list) {
+            if (predicate.test(item)) {
+                walkList(output, function.apply(item), predicate, function);
+            } else {
+                output.add(item);
             }
-        } catch (NullPointerException ignored) {
         }
 
     }
