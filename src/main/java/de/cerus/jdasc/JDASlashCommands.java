@@ -8,6 +8,8 @@ import de.cerus.jdasc.command.ApplicationCommand;
 import de.cerus.jdasc.command.ApplicationCommandListener;
 import de.cerus.jdasc.command.ApplicationCommandOption;
 import de.cerus.jdasc.command.ApplicationCommandOptionType;
+import de.cerus.jdasc.command.permissions.ApplicationCommandPermissions;
+import de.cerus.jdasc.command.permissions.GuildApplicationCommandPermissions;
 import de.cerus.jdasc.http.DiscordHttpClient;
 import de.cerus.jdasc.interaction.Interaction;
 import de.cerus.jdasc.interaction.followup.FollowupMessage;
@@ -73,7 +75,21 @@ public class JDASlashCommands {
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final MessageEmbed... embeds) {
-        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds)));
+        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds), 0));
+    }
+
+    /**
+     * Edit a followup message
+     *
+     * @param interaction The interaction
+     * @param embeds      The message content
+     * @param messageId   The id of your followup message
+     * @param flags       The flags
+     *
+     * @return A future
+     */
+    public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final int flags, final MessageEmbed... embeds) {
+        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds), flags));
     }
 
     /**
@@ -86,7 +102,21 @@ public class JDASlashCommands {
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final String message) {
-        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>()));
+        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>(), 0));
+    }
+
+    /**
+     * Edit a followup message
+     *
+     * @param interaction The interaction
+     * @param message     The message content
+     * @param messageId   The id of your followup message
+     * @param flags       The discord flags
+     *
+     * @return A future
+     */
+    public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final String message, final int flags) {
+        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>(), flags));
     }
 
     /**
@@ -112,7 +142,21 @@ public class JDASlashCommands {
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final MessageEmbed... embeds) {
-        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds)));
+        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds), 0));
+    }
+
+    /**
+     * Submit a followup message
+     * This requires that you have at least acknowledged the interaction
+     *
+     * @param interaction The interaction
+     * @param flags       The discord flags
+     * @param embeds      The message content
+     *
+     * @return The sent message
+     */
+    public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final int flags, final MessageEmbed... embeds) {
+        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds), flags));
     }
 
     /**
@@ -125,7 +169,21 @@ public class JDASlashCommands {
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final String message) {
-        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>()));
+        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>(), 0));
+    }
+
+    /**
+     * Submit a followup message
+     * This requires that you have at least acknowledged the interaction
+     *
+     * @param flags       The discord flags
+     * @param interaction The interaction
+     * @param message     The message content
+     *
+     * @return The sent message
+     */
+    public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final String message, final int flags) {
+        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>(), flags));
     }
 
     /**
@@ -240,7 +298,7 @@ public class JDASlashCommands {
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final MessageEmbed... embeds) {
         return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
-                false, "", Arrays.asList(embeds)
+                false, "", Arrays.asList(embeds), 0
         ));
     }
 
@@ -257,7 +315,25 @@ public class JDASlashCommands {
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final String message) {
         return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
-                false, message, new ArrayList<>()
+                false, message, new ArrayList<>(), 0
+        ));
+    }
+
+    /**
+     * Edit your interaction response
+     * Will produce a 404 if you did not send a response
+     *
+     * @param interaction The interaction
+     * @param message     The new message content
+     * @param flags       The flags (set to 64 if you want to make commands private)
+     *
+     * @return A future
+     *
+     * @see JDASlashCommands#editInteractionResponse(Interaction, InteractionApplicationCommandCallbackData)
+     */
+    public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final String message, final int flags) {
+        return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
+                false, message, new ArrayList<>(), flags
         ));
     }
 
@@ -322,6 +398,53 @@ public class JDASlashCommands {
                 throw new CompletionException(e);
             }
         });
+    }
+
+    /**
+     * Retrieve a guild commands permissions
+     *
+     * @param guildId   The id of the guild
+     * @param commandId The id of the command
+     *
+     * @return The command's permissions
+     */
+    public static CompletableFuture<GuildApplicationCommandPermissions> getGuildCommandPermissions(final long guildId, final long commandId) {
+        return discordHttpClient.getApplicationCommandPermissions(guildId, commandId).thenApply(response -> {
+            try {
+                if (response.code() == 404) {
+                    return new GuildApplicationCommandPermissions(commandId, Long.parseLong(discordHttpClient.applicationId), guildId, new ArrayList<>());
+                }
+                return discordHttpClient.getGson().fromJson(JsonParser.parseString(response.body().string()), GuildApplicationCommandPermissions.class);
+            } catch (final IOException e) {
+                throw new CompletionException(e);
+            }
+        });
+    }
+
+    /**
+     * Edit a guild commands permissions
+     *
+     * @param guildId     The id of the guild
+     * @param commandId   The id of the command
+     * @param permissions The permissions
+     *
+     * @return The command's permissions
+     */
+    public static CompletableFuture<Void> editGuildCommandPermissions(final long guildId, final long commandId, final ApplicationCommandPermissions... permissions) {
+        return editGuildCommandPermissions(guildId, commandId, Arrays.asList(permissions));
+    }
+
+    /**
+     * Edit  a guild commands permissions
+     *
+     * @param guildId     The id of the guild
+     * @param commandId   The id of the command
+     * @param permissions The permissions
+     *
+     * @return The command's permissions
+     */
+    public static CompletableFuture<Void> editGuildCommandPermissions(final long guildId, final long commandId, final List<ApplicationCommandPermissions> permissions) {
+        return discordHttpClient.editApplicationCommandPermissions(guildId, commandId, permissions).thenApply(response -> null);
     }
 
     /**
@@ -415,9 +538,9 @@ public class JDASlashCommands {
         }
 
         listener.onInteraction(interaction);
-        final InteractionResponseOption argument = findArgument(command, interaction);
-        if (argument != null) {
-            listener.handleArgument(interaction, argument.getName(), argument);
+        final Map<String, InteractionResponseOption> arguments = findArguments(command, interaction);
+        if (arguments != null && !arguments.isEmpty()) {
+            listener.handleArguments(interaction, arguments);
         }
     }
 
@@ -429,7 +552,7 @@ public class JDASlashCommands {
      *
      * @return A argument or null
      */
-    private static InteractionResponseOption findArgument(final ApplicationCommand command, final Interaction interaction) {
+    private static Map<String, InteractionResponseOption> findArguments(final ApplicationCommand command, final Interaction interaction) {
         final List<ApplicationCommandOption> cmdOptions = new ArrayList<>();
         walkList(cmdOptions, command.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, ApplicationCommandOption::getOptions);
         final Set<String> argNames = cmdOptions.stream()
@@ -442,11 +565,14 @@ public class JDASlashCommands {
         walkList(rspOptions, interaction.getOptions(), option -> option.getOptions() != null && option.getOptions().size() > 0, InteractionResponseOption::getOptions);
         return rspOptions.stream()
                 .filter(option -> argNames.contains(option.getName()))
-                .findAny()
-                .orElse(null);
+                .collect(Collectors.toMap(InteractionResponseOption::getName, interactionResponseOption -> interactionResponseOption));
     }
 
+
     private static <T> void walkList(final List<T> output, final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
+        if (list == null) {
+            return;
+        }
         for (final T item : list) {
             if (predicate.test(item)) {
                 walkList(output, function.apply(item), predicate, function);
@@ -454,6 +580,7 @@ public class JDASlashCommands {
                 output.add(item);
             }
         }
+
     }
 
     /**
