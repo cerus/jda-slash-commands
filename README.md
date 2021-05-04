@@ -2,13 +2,10 @@
 
 [Slash commands](https://discord.com/developers/docs/interactions/slash-commands) for [JDA](https://github.com/DV8FromTheWorld/JDA)
 
-
 This library is only a temporary solution until JDA officially supports slash commands. I decided against contributing to JDA because I don't want to
 mess up their code base.
 
 This library is also lacking some documentation. If you have any questions feel free to open an issue.
-
-
 
 ## Features
 
@@ -94,6 +91,7 @@ public class MyBot {
 ## Installation
 
 **Maven**
+
 ``` xml
 <repositories>
     <repository>

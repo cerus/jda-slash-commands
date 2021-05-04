@@ -8,7 +8,11 @@ import de.cerus.jdasc.command.ApplicationCommand;
 import de.cerus.jdasc.command.ApplicationCommandOptionType;
 import de.cerus.jdasc.command.permissions.ApplicationCommandPermissionType;
 import de.cerus.jdasc.command.permissions.ApplicationCommandPermissions;
-import de.cerus.jdasc.gson.*;
+import de.cerus.jdasc.gson.ApplicationCommandOptionTypeTypeAdapter;
+import de.cerus.jdasc.gson.ApplicationCommandPermissionTypeAdapter;
+import de.cerus.jdasc.gson.InteractionResponseTypeAdapter;
+import de.cerus.jdasc.gson.InteractionResponseTypeTypeAdapter;
+import de.cerus.jdasc.gson.MessageEmbedTypeAdapter;
 import de.cerus.jdasc.interaction.Interaction;
 import de.cerus.jdasc.interaction.followup.FollowupMessage;
 import de.cerus.jdasc.interaction.response.InteractionApplicationCommandCallbackData;
@@ -16,13 +20,10 @@ import de.cerus.jdasc.interaction.response.InteractionResponse;
 import de.cerus.jdasc.interaction.response.InteractionResponseType;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
-
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import okhttp3.MediaType;
@@ -33,8 +34,8 @@ import okhttp3.Response;
 
 public class DiscordHttpClient {
 
-    private final Gson gson;
     public final String applicationId;
+    private final Gson gson;
     private final String botToken;
     private final ExecutorService executorService;
     private final OkHttpClient httpClient;
@@ -93,7 +94,7 @@ public class DiscordHttpClient {
         final String body = this.gson.toJson(message);
         return this.execute(new Request.Builder()
                 .url(String.format("https://discord.com/api/v8/webhooks/%s/%s", this.applicationId, interaction.getToken()))
-                .post(RequestBody.create( MediaType.get("application/json; charset=utf-8"), body))
+                .post(RequestBody.create(MediaType.get("application/json; charset=utf-8"), body))
                 .addHeader("Authorization", "Bot " + this.botToken)
                 .build(), 200, 204, 201);
     }
@@ -121,7 +122,7 @@ public class DiscordHttpClient {
         final String body = this.gson.toJson(response);
         return this.execute(new Request.Builder()
                 .url(String.format("https://discord.com/api/v8/interactions/%d/%s/callback", interaction.getId(), interaction.getToken()))
-                .post(RequestBody.create( MediaType.get("application/json; charset=utf-8"), body))
+                .post(RequestBody.create(MediaType.get("application/json; charset=utf-8"), body))
                 .addHeader("Authorization", "Bot " + this.botToken)
                 .build(), 200, 204);
     }

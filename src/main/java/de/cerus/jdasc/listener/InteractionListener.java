@@ -1,6 +1,5 @@
 package de.cerus.jdasc.listener;
 
-import co.aikar.commands.annotation.Private;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -47,7 +46,7 @@ public class InteractionListener extends ListenerAdapter {
             }
 
             final JDA jda = event.getJDA();
-            if(object.has("guild_id")){
+            if (object.has("guild_id")) {
                 final Guild guild = jda.getGuildById(object.get("guild_id").getAsString());
                 final Member member = guild.retrieveMemberById(object.get("member").getAsJsonObject().get("user").getAsJsonObject().get("id").getAsString()).complete();
                 final TextChannel textChannel = guild.getTextChannelById(object.get("channel_id").getAsString());
@@ -55,7 +54,7 @@ public class InteractionListener extends ListenerAdapter {
                 jda.getEventManager().handle(new CommandInteractionEvent(jda, interaction));
             }
             //Direct messages
-            else{
+            else {
                 final PrivateChannel textChannel = jda.getPrivateChannelById(object.get("channel_id").getAsString());
                 final Interaction interaction = new Interaction(token, id, type, commandId, commandName, null, (TextChannel) textChannel, null, options);
                 jda.getEventManager().handle(new CommandInteractionEvent(jda, interaction));
