@@ -10,11 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
+
+import net.dv8tion.jda.api.entities.*;
 
 public class Interaction {
 
@@ -23,7 +20,7 @@ public class Interaction {
     private final long commandId;
     private final String commandName;
     private final Guild guild;
-    private final TextChannel channel;
+    private final MessageChannel channel;
     private final Member member;
     private final String token;
     private final List<InteractionResponseOption> options;
@@ -34,7 +31,7 @@ public class Interaction {
                        final long commandId,
                        final String commandName,
                        final Guild guild,
-                       final TextChannel channel,
+                       final MessageChannel channel,
                        final Member member,
                        final List<InteractionResponseOption> options) {
         this.token = token;
@@ -47,6 +44,7 @@ public class Interaction {
         this.member = member;
         this.options = options;
     }
+
 
     /**
      * Acknowledge the interaction but don't send a message.
@@ -303,7 +301,7 @@ public class Interaction {
         return this.guild;
     }
 
-    public TextChannel getChannel() {
+    public MessageChannel getChannel() {
         return this.channel;
     }
 
