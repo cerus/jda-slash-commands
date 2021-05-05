@@ -228,11 +228,11 @@ public class JDASlashCommands {
     }
 
     @NotNull
-    private static CompletableFuture<Long> getLongCompletableFuture(ApplicationCommand command, ApplicationCommandListener listener, List<ApplicationCommand> globalCommands) {
+    private static CompletableFuture<Long> getLongCompletableFuture(ApplicationCommand command, ApplicationCommandListener listener, List<ApplicationCommand> commands) {
         final CompletableFuture<Long> future = new CompletableFuture<>();
-        commandMap.put(globalCommands.get(globalCommands.indexOf(command)).getId(), command);
+        commandMap.put(commands.get(commands.indexOf(command)).getId(), command);
         commandListenerMap.put(command, listener);
-        future.complete(globalCommands.get(globalCommands.indexOf(command)).getId());
+        future.complete(commands.get(commands.indexOf(command)).getId());
         return future;
     }
 
