@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -198,20 +199,41 @@ public class JDASlashCommands {
      * @return The command id
      */
     public static CompletableFuture<Long> submitGlobalCommand(final ApplicationCommand command, final ApplicationCommandListener listener) {
-        return discordHttpClient.submitGlobalCommand(command).thenApply(response -> {
-            final JsonObject object;
-            try {
-                object = JsonParser.parseString(response.body().string()).getAsJsonObject();
-            } catch (final IOException e) {
-                throw new CompletionException(e);
+        try {
+            List<ApplicationCommand> globalCommands = getGlobalCommands().get();
+            if(globalCommands.contains(command)){
+                return getLongCompletableFuture(command, listener, globalCommands);
+            }
+            else{
+                return discordHttpClient.submitGlobalCommand(command).thenApply(response -> {
+                    final JsonObject object;
+                    try {
+                        object = JsonParser.parseString(response.body().string()).getAsJsonObject();
+                    } catch (final IOException e) {
+                        throw new CompletionException(e);
+                    }
+
+                    return object.get("id").getAsLong();
+                }).thenApply(commandId -> {
+                    commandMap.put(commandId, command);
+                    commandListenerMap.put(command, listener);
+                    return commandId;
+                });
             }
 
-            return object.get("id").getAsLong();
-        }).thenApply(commandId -> {
-            commandMap.put(commandId, command);
-            commandListenerMap.put(command, listener);
-            return commandId;
-        });
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @NotNull
+    private static CompletableFuture<Long> getLongCompletableFuture(ApplicationCommand command, ApplicationCommandListener listener, List<ApplicationCommand> globalCommands) {
+        final CompletableFuture<Long> future = new CompletableFuture<>();
+        commandMap.put(globalCommands.get(globalCommands.indexOf(command)).getId(), command);
+        commandListenerMap.put(command, listener);
+        future.complete(globalCommands.get(globalCommands.indexOf(command)).getId());
+        return future;
     }
 
     /**
@@ -239,20 +261,32 @@ public class JDASlashCommands {
     public static CompletableFuture<Long> submitGuildCommand(final ApplicationCommand command,
                                                              final long guildId,
                                                              final ApplicationCommandListener listener) {
-        return discordHttpClient.submitGuildCommand(command, guildId).thenApply(response -> {
-            final JsonObject object;
-            try {
-                object = JsonParser.parseString(response.body().string()).getAsJsonObject();
-            } catch (final IOException e) {
-                throw new CompletionException(e);
-            }
+        try {
+            List<ApplicationCommand> guildCommands = getGuildCommands(guildId).get();
+            if (guildCommands.contains(command)) {
+                return getLongCompletableFuture(command, listener, guildCommands);
+            } else {
+                return discordHttpClient.submitGuildCommand(command, guildId).thenApply(response -> {
+                    final JsonObject object;
+                    try {
+                        object = JsonParser.parseString(response.body().string()).getAsJsonObject();
+                    } catch (final IOException e) {
+                        throw new CompletionException(e);
+                    }
 
-            return object.get("id").getAsLong();
-        }).thenApply(commandId -> {
-            commandMap.put(commandId, command);
-            commandListenerMap.put(command, listener);
-            return commandId;
-        });
+                    return object.get("id").getAsLong();
+                }).thenApply(commandId -> {
+                    commandMap.put(commandId, command);
+                    commandListenerMap.put(command, listener);
+                    return commandId;
+                });
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+
     }
 
 
@@ -535,7 +569,7 @@ public class JDASlashCommands {
 
 
     private static <T> void walkList(final List<T> output, final List<T> list, final Predicate<T> predicate, final Function<T, List<T>> function) {
-        if(list == null){
+        if (list == null) {
             return;
         }
         for (final T item : list) {
