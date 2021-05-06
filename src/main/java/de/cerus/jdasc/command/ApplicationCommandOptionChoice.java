@@ -1,5 +1,7 @@
 package de.cerus.jdasc.command;
 
+import com.google.common.base.Objects;
+
 import java.util.function.Predicate;
 
 /**
@@ -26,6 +28,19 @@ public class ApplicationCommandOptionChoice {
         if (!NAME_PREDICATE.test(this.name)) {
             throw new IllegalStateException("Invalid choice name");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ApplicationCommandOptionChoice)) return false;
+        ApplicationCommandOptionChoice that = (ApplicationCommandOptionChoice) o;
+        return Objects.equal(getName(), that.getName()) && Objects.equal(getValue(), that.getValue());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getName(), getValue());
     }
 
     public String getName() {
