@@ -10,7 +10,7 @@ public class InteractionApplicationCommandCallbackData {
     private final List<MessageEmbed> embeds;
     private final int flags;
 
-    public InteractionApplicationCommandCallbackData(final boolean tts, final String content, final List<MessageEmbed> embeds, int flags) {
+    public InteractionApplicationCommandCallbackData(final boolean tts, final String content, final List<MessageEmbed> embeds, final int flags) {
         this.tts = tts;
         this.content = content;
         this.embeds = embeds;
@@ -38,6 +38,6 @@ public class InteractionApplicationCommandCallbackData {
     }
 
     public int getFlags() {
-        return flags;
+        return this.flags;
     }
 }

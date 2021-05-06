@@ -3,12 +3,13 @@ package de.cerus.jdasc.command.permissions;
 import java.util.List;
 
 public class GuildApplicationCommandPermissions {
+
     private final long id;
     private final long applicationId;
     private final long guildId;
     private final List<ApplicationCommandPermissions> permissions;
 
-    public GuildApplicationCommandPermissions(long id, long applicationId, long guildId, List<ApplicationCommandPermissions> permissions) {
+    public GuildApplicationCommandPermissions(final long id, final long applicationId, final long guildId, final List<ApplicationCommandPermissions> permissions) {
         this.id = id;
         this.applicationId = applicationId;
         this.guildId = guildId;
@@ -16,18 +17,18 @@ public class GuildApplicationCommandPermissions {
     }
 
     public long getId() {
-        return id;
+        return this.id;
     }
 
     public List<ApplicationCommandPermissions> getPermissions() {
-        return permissions;
+        return this.permissions;
     }
 
     public long getApplicationId() {
-        return applicationId;
+        return this.applicationId;
     }
 
     public long getGuildId() {
-        return guildId;
+        return this.guildId;
     }
 }

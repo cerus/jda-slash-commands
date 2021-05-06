@@ -6,19 +6,19 @@ import okhttp3.Response;
 
 public class DiscordApiException extends RuntimeException {
 
-    private final int[] expectedStatusCode;
+    private final int[] expectedStatusCodes;
     private final Request request;
     private final Response response;
 
-    public DiscordApiException(final int[] expectedStatusCode, final Request request, final Response response) {
-        super("Expected one of " + Arrays.toString(expectedStatusCode) + " but got " + response.code());
-        this.expectedStatusCode = expectedStatusCode;
+    public DiscordApiException(final int[] expectedStatusCodes, final Request request, final Response response) {
+        super("Expected one of " + Arrays.toString(expectedStatusCodes) + " but got " + response.code());
+        this.expectedStatusCodes = expectedStatusCodes;
         this.request = request;
         this.response = response;
     }
 
-    public int[] getExpectedStatusCode() {
-        return this.expectedStatusCode;
+    public int[] getExpectedStatusCodes() {
+        return this.expectedStatusCodes;
     }
 
     public Request getRequest() {

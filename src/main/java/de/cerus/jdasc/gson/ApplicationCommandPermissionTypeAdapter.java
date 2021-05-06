@@ -3,9 +3,7 @@ package de.cerus.jdasc.gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import de.cerus.jdasc.command.ApplicationCommandOptionType;
 import de.cerus.jdasc.command.permissions.ApplicationCommandPermissionType;
-
 import java.io.IOException;
 
 public class ApplicationCommandPermissionTypeAdapter extends TypeAdapter<ApplicationCommandPermissionType> {
