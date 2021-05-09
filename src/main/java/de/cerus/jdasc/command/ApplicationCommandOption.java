@@ -81,7 +81,12 @@ public class ApplicationCommandOption {
         if (this == o) return true;
         if (!(o instanceof ApplicationCommandOption)) return false;
         ApplicationCommandOption that = (ApplicationCommandOption) o;
-        return isRequired() == that.isRequired() && getType() == that.getType() && Objects.equal(getName(), that.getName()) && Objects.equal(getDescription(), that.getDescription()) && Objects.equal(getChoices(), that.getChoices()) && getOptions().isEmpty() || getOptions() == null || Objects.equal(getOptions(), that.getOptions());
+        return isRequired() == that.isRequired() &&
+                getType() == that.getType() &&
+                Objects.equal(getName(), that.getName()) &&
+                Objects.equal(getDescription(), that.getDescription()) &&
+                Objects.equal(getChoices(), that.getChoices()) &&
+                (getOptions() == null || getOptions().isEmpty() || Objects.equal(getOptions(), that.getOptions()));
     }
 
     @Override

@@ -226,10 +226,10 @@ public class JDASlashCommands {
 
     @NotNull
     private static CompletableFuture<Long> getLongCompletableFuture(ApplicationCommand command, ApplicationCommandListener listener, Map<Long, ApplicationCommand> commands) {
-        HashBiMap<Long, ApplicationCommand> map = HashBiMap.create(commands);
-        commandMap.put(map.inverse().get(command), command);
+        Long id = Objects.requireNonNull(commands.values().stream().filter(applicationCommand -> applicationCommand.equals(command)).findFirst().orElse(null)).getId();
+        commandMap.put(id, command);
         commandListenerMap.put(command, listener);
-        return CompletableFuture.completedFuture(map.inverse().get(command));
+        return CompletableFuture.completedFuture(id);
 
     }
 
