@@ -54,6 +54,17 @@ public class ApplicationCommand {
         return com.google.common.base.Objects.hashCode(getName(), getDescription(), getOptions());
     }
 
+
+    @Override
+    public String toString() {
+        return "ApplicationCommand{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", options=" + options +
+                ", id=" + id +
+                '}';
+    }
+
     public String getName() {
         return this.name;
     }

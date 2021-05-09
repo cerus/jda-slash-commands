@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -268,13 +269,20 @@ public class JDASlashCommands {
                                                              final long guildId,
                                                              final ApplicationCommandListener listener) {
 
-        if(!guildCommands.containsKey(guildId)){
+        if(guildCommands.get(guildId) == null || guildCommands.get(guildId).isEmpty()){
             Map<Long, ApplicationCommand> commandMap = new HashMap<>();
-            getGuildCommands(guildId).whenComplete((applicationCommands, throwable) -> applicationCommands.forEach(applicationCommand -> commandMap.put(applicationCommand.getId(), applicationCommand)));
-            guildCommands.put(guildId, commandMap);
+            try {
+                for (ApplicationCommand applicationCommand : getGuildCommands(guildId).get()) {
+                    commandMap.put(applicationCommand.getId(), applicationCommand);
+                }
+                guildCommands.put(guildId, commandMap);
+
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
         }
 
-        if (guildCommands.get(guildId).containsValue(command)) {
+        if (new ArrayList<>(guildCommands.get(guildId).values()).contains(command)) {
             return getLongCompletableFuture(command, listener, discordCommands);
         } else {
             return discordHttpClient.submitGuildCommand(command, guildId).thenApply(response -> {
