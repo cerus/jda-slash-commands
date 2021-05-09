@@ -271,15 +271,11 @@ public class JDASlashCommands {
 
         if(guildCommands.get(guildId) == null || guildCommands.get(guildId).isEmpty()){
             Map<Long, ApplicationCommand> commandMap = new HashMap<>();
-            try {
-                for (ApplicationCommand applicationCommand : getGuildCommands(guildId).get()) {
-                    commandMap.put(applicationCommand.getId(), applicationCommand);
-                }
-                guildCommands.put(guildId, commandMap);
-
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+            for (ApplicationCommand applicationCommand : getGuildCommands(guildId).join()) {
+                commandMap.put(applicationCommand.getId(), applicationCommand);
             }
+            guildCommands.put(guildId, commandMap);
+
         }
 
         if (new ArrayList<>(guildCommands.get(guildId).values()).contains(command)) {
