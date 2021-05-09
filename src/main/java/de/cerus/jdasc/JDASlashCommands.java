@@ -201,7 +201,7 @@ public class JDASlashCommands {
      * @return The command id
      */
     public static CompletableFuture<Long> submitGlobalCommand(final ApplicationCommand command, final ApplicationCommandListener listener) {
-        if (guildCommands.containsValue(command)) {
+        if (discordCommands.containsValue(command)) {
             return getLongCompletableFuture(command, listener, discordCommands);
         } else {
             return discordHttpClient.submitGlobalCommand(command).thenApply(response -> {
