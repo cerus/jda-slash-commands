@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sun.xml.internal.ws.util.CompletedFuture;
 import de.cerus.jdasc.command.ApplicationCommand;
 import de.cerus.jdasc.command.ApplicationCommandListener;
 import de.cerus.jdasc.command.ApplicationCommandOption;
@@ -32,11 +31,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.sql.Array;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -46,6 +43,7 @@ public class JDASlashCommands {
 
     private static final Map<Long, ApplicationCommand> commandMap = new HashMap<>();
     private static final Map<Long, ApplicationCommand> discordCommands = new HashMap<>();
+    private static final Map<Long, Map<Long, ApplicationCommand>> guildCommands = new HashMap<>();
     private static final Map<ApplicationCommand, ApplicationCommandListener> commandListenerMap = new HashMap<>();
 
     private static DiscordHttpClient discordHttpClient;
@@ -203,7 +201,7 @@ public class JDASlashCommands {
      * @return The command id
      */
     public static CompletableFuture<Long> submitGlobalCommand(final ApplicationCommand command, final ApplicationCommandListener listener) {
-        if (discordCommands.containsValue(command)) {
+        if (guildCommands.containsValue(command)) {
             return getLongCompletableFuture(command, listener, discordCommands);
         } else {
             return discordHttpClient.submitGlobalCommand(command).thenApply(response -> {
@@ -269,7 +267,14 @@ public class JDASlashCommands {
     public static CompletableFuture<Long> submitGuildCommand(final ApplicationCommand command,
                                                              final long guildId,
                                                              final ApplicationCommandListener listener) {
-        if (discordCommands.containsValue(command)) {
+
+        guildCommands.computeIfAbsent(guildId, aLong -> {
+            Map<Long, ApplicationCommand> commandMap = new HashMap<>();
+            getGuildCommands(guildId).whenComplete((applicationCommands, throwable) -> applicationCommands.forEach(applicationCommand -> commandMap.put(applicationCommand.getId(), applicationCommand)));
+            return commandMap;
+        });
+
+        if (guildCommands.get(guildId).containsValue(command)) {
             return getLongCompletableFuture(command, listener, discordCommands);
         } else {
             return discordHttpClient.submitGuildCommand(command, guildId).thenApply(response -> {
