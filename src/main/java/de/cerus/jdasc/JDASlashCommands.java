@@ -268,7 +268,7 @@ public class JDASlashCommands {
 
         }
 
-        if (HashBiMap.create(guildCommands.get(guildId)).containsValue(command)) {
+        if (guildCommands.get(guildId).values().stream().anyMatch(applicationCommand -> applicationCommand.equals(command))) {
             return getLongCompletableFuture(command, listener, guildCommands.get(guildId));
         } else {
             return discordHttpClient.submitGuildCommand(command, guildId).thenApply(response -> {
