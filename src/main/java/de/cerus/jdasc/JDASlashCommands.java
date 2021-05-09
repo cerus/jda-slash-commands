@@ -1,5 +1,6 @@
 package de.cerus.jdasc;
 
+import com.google.common.collect.HashBiMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -34,7 +35,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -226,20 +226,10 @@ public class JDASlashCommands {
 
     @NotNull
     private static CompletableFuture<Long> getLongCompletableFuture(ApplicationCommand command, ApplicationCommandListener listener, Map<Long, ApplicationCommand> commands) {
-        final CompletableFuture<Long> future = new CompletableFuture<>();
-        Long id = null;
-        for (ApplicationCommand applicationCommand : new ArrayList<>(commands.values())) {
-            if(applicationCommand == command){
-                id = applicationCommand.getId();
-            }
-        }
-        if(id != null){
-            commandMap.put(id, command);
-            commandListenerMap.put(command, listener);
-            future.complete(id);
-            return future;
-        }
-        return CompletableFuture.completedFuture(1L);
+        HashBiMap<Long, ApplicationCommand> map = HashBiMap.create(commands);
+        commandMap.put(map.inverse().get(command), command);
+        commandListenerMap.put(command, listener);
+        return CompletableFuture.completedFuture(map.inverse().get(command));
 
     }
 
@@ -269,7 +259,7 @@ public class JDASlashCommands {
                                                              final long guildId,
                                                              final ApplicationCommandListener listener) {
 
-        if(guildCommands.get(guildId) == null || guildCommands.get(guildId).isEmpty()){
+        if (guildCommands.get(guildId) == null || guildCommands.get(guildId).isEmpty()) {
             Map<Long, ApplicationCommand> commandMap = new HashMap<>();
             for (ApplicationCommand applicationCommand : getGuildCommands(guildId).join()) {
                 commandMap.put(applicationCommand.getId(), applicationCommand);
@@ -279,7 +269,7 @@ public class JDASlashCommands {
         }
 
         if (new ArrayList<>(guildCommands.get(guildId).values()).contains(command)) {
-            return getLongCompletableFuture(command, listener, discordCommands);
+            return getLongCompletableFuture(command, listener, guildCommands.get(guildId));
         } else {
             return discordHttpClient.submitGuildCommand(command, guildId).thenApply(response -> {
                 final JsonObject object;
