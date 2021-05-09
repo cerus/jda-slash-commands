@@ -268,11 +268,11 @@ public class JDASlashCommands {
                                                              final long guildId,
                                                              final ApplicationCommandListener listener) {
 
-        guildCommands.computeIfAbsent(guildId, aLong -> {
+        if(!guildCommands.containsKey(guildId)){
             Map<Long, ApplicationCommand> commandMap = new HashMap<>();
             getGuildCommands(guildId).whenComplete((applicationCommands, throwable) -> applicationCommands.forEach(applicationCommand -> commandMap.put(applicationCommand.getId(), applicationCommand)));
-            return commandMap;
-        });
+            guildCommands.put(guildId, commandMap);
+        }
 
         if (guildCommands.get(guildId).containsValue(command)) {
             return getLongCompletableFuture(command, listener, discordCommands);
