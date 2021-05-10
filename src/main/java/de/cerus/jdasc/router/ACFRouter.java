@@ -22,7 +22,7 @@ public class ACFRouter extends CommandRouter {
     public void route(final JDA jda, final ApplicationCommand command, final Interaction interaction) {
         final Message message = new FakeMessage(false, this.makeCommandString(interaction), null, null, interaction);
         final MessageReceivedEvent event = new MessageReceivedEvent(jda, jda.getResponseTotal(), message);
-        interaction.acknowledge(false).whenComplete((unused, throwable) -> {
+        interaction.acknowledge().whenComplete((unused, throwable) -> {
             try {
                 final Method method = this.commandManager.getClass().getDeclaredMethod("dispatchEvent", MessageReceivedEvent.class);
                 method.setAccessible(true);

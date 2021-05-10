@@ -10,8 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 
 public class Interaction {
 
@@ -49,13 +52,11 @@ public class Interaction {
     /**
      * Acknowledge the interaction but don't send a message.
      *
-     * @param eatInput Whether you want to not show (eat) the user's input (message)
-     *
      * @return A future
      */
-    public CompletableFuture<Void> acknowledge(final boolean eatInput) {
+    public CompletableFuture<Void> acknowledge() {
         return this.respond(new InteractionResponse(
-                eatInput ? InteractionResponseType.ACKNOWLEDGE : InteractionResponseType.ACKNOWLEDGE_WITH_SOURCE,
+                InteractionResponseType.ACKNOWLEDGE_WITH_SOURCE,
                 new InteractionApplicationCommandCallbackData(false, "", null, 0)
         ));
     }
@@ -63,14 +64,13 @@ public class Interaction {
     /**
      * Acknowledge the interaction but don't send a message.
      *
-     * @param eatInput Whether you want to not show (eat) the user's input (message)
-     * @param flags    The flags for the callback
+     * @param flags The flags for the callback (64 for ephemeral)
      *
      * @return A future
      */
-    public CompletableFuture<Void> acknowledge(final boolean eatInput, final int flags) {
+    public CompletableFuture<Void> acknowledge(final int flags) {
         return this.respond(new InteractionResponse(
-                eatInput ? InteractionResponseType.ACKNOWLEDGE : InteractionResponseType.ACKNOWLEDGE_WITH_SOURCE,
+                InteractionResponseType.ACKNOWLEDGE_WITH_SOURCE,
                 new InteractionApplicationCommandCallbackData(false, "", null, flags)
         ));
     }
@@ -78,52 +78,50 @@ public class Interaction {
     /**
      * Acknowledge the interaction and send a message.
      *
-     * @param eatInput Whether you want to not show (eat) the user's input (message)
-     * @param embeds   Up to 10 MessageEmbed's
+     * @param embeds Up to 10 MessageEmbed's
      *
      * @return A future
      *
      * @see MessageEmbed
      * @see net.dv8tion.jda.api.EmbedBuilder
      */
-    public CompletableFuture<Void> respond(final boolean eatInput, final MessageEmbed... embeds) {
-        return this.respond(eatInput, Arrays.asList(embeds));
+    public CompletableFuture<Void> respond(final MessageEmbed... embeds) {
+        return this.respond(Arrays.asList(embeds));
     }
 
     /**
      * Acknowledge the interaction and send a message.
      *
-     * @param eatInput Whether you want to not show (eat) the user's input (message)
-     * @param flags    The discord flags
-     * @param embeds   Up to 10 MessageEmbed's
+     * @param flags  The discord flags
+     * @param embeds Up to 10 MessageEmbed's
      *
      * @return A future
      *
      * @see MessageEmbed
      * @see net.dv8tion.jda.api.EmbedBuilder
      */
-    public CompletableFuture<Void> respond(final boolean eatInput, final int flags, final MessageEmbed... embeds) {
-        return this.respond(eatInput, Arrays.asList(embeds), flags);
+    public CompletableFuture<Void> respond(final int flags, final MessageEmbed... embeds) {
+        return this.respond(Arrays.asList(embeds), flags);
     }
 
     /**
      * Acknowledge the interaction and send a message.
      *
-     * @param eatInput Whether you want to not show (eat) the user's input (message)
-     * @param embeds   Up to 10 MessageEmbed's
+     * @param embeds Up to 10 MessageEmbed's
      *
      * @return A future
      *
      * @see MessageEmbed
      * @see net.dv8tion.jda.api.EmbedBuilder
      */
-    public CompletableFuture<Void> respond(final boolean eatInput, final List<MessageEmbed> embeds) {
+    public CompletableFuture<Void> respond(final List<MessageEmbed> embeds) {
         return this.respond(new InteractionResponse(
-                eatInput ? InteractionResponseType.CHANNEL_MESSAGE : InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 new InteractionApplicationCommandCallbackData(
                         false,
                         "",
-                        embeds, 0
+                        embeds,
+                        0
                 )
         ));
     }
@@ -131,22 +129,22 @@ public class Interaction {
     /**
      * Acknowledge the interaction and send a message.
      *
-     * @param eatInput Whether you want to not show (eat) the user's input (message)
-     * @param embeds   Up to 10 MessageEmbed's
-     * @param flags    Discord flags
+     * @param embeds Up to 10 MessageEmbed's
+     * @param flags  Discord flags
      *
      * @return A future
      *
      * @see MessageEmbed
      * @see net.dv8tion.jda.api.EmbedBuilder
      */
-    public CompletableFuture<Void> respond(final boolean eatInput, final List<MessageEmbed> embeds, final int flags) {
+    public CompletableFuture<Void> respond(final List<MessageEmbed> embeds, final int flags) {
         return this.respond(new InteractionResponse(
-                eatInput ? InteractionResponseType.CHANNEL_MESSAGE : InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 new InteractionApplicationCommandCallbackData(
                         false,
                         "",
-                        embeds, flags
+                        embeds,
+                        flags
                 )
         ));
     }
@@ -154,14 +152,13 @@ public class Interaction {
     /**
      * Acknowledge the interaction and send a message.
      *
-     * @param eatInput Whether you want to not show (eat) the user's input (message)
-     * @param message  Your message
+     * @param message Your message
      *
      * @return A future
      */
-    public CompletableFuture<Void> respond(final boolean eatInput, final String message) {
+    public CompletableFuture<Void> respond(final String message) {
         return this.respond(new InteractionResponse(
-                eatInput ? InteractionResponseType.CHANNEL_MESSAGE : InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 new InteractionApplicationCommandCallbackData(
                         false,
                         message,
@@ -173,15 +170,14 @@ public class Interaction {
     /**
      * Acknowledge the interaction and send a message.
      *
-     * @param eatInput Whether you want to not show (eat) the user's input (message)
-     * @param message  Your message
-     * @param flags    The discord flags
+     * @param message Your message
+     * @param flags   The discord flags
      *
      * @return A future
      */
-    public CompletableFuture<Void> respond(final boolean eatInput, final String message, final int flags) {
+    public CompletableFuture<Void> respond(final String message, final int flags) {
         return this.respond(new InteractionResponse(
-                eatInput ? InteractionResponseType.CHANNEL_MESSAGE : InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                 new InteractionApplicationCommandCallbackData(
                         false,
                         message,

@@ -5,7 +5,9 @@ import java.util.Arrays;
 public enum InteractionResponseType {
 
     PONG(1),
+    @Deprecated
     ACKNOWLEDGE(2),
+    @Deprecated
     CHANNEL_MESSAGE(3),
     CHANNEL_MESSAGE_WITH_SOURCE(4),
     ACKNOWLEDGE_WITH_SOURCE(5);
