@@ -1,5 +1,7 @@
 package de.cerus.jdasc.command.permissions;
 
+import com.google.common.base.Objects;
+
 public class ApplicationCommandPermissions {
 
     private final long id;
@@ -22,5 +24,18 @@ public class ApplicationCommandPermissions {
 
     public boolean isPermission() {
         return this.permission;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ApplicationCommandPermissions)) return false;
+        ApplicationCommandPermissions that = (ApplicationCommandPermissions) o;
+        return getId() == that.getId() && isPermission() == that.isPermission() && getType() == that.getType();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId(), getType(), isPermission());
     }
 }
