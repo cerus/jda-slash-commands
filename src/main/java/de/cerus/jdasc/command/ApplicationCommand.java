@@ -41,6 +41,30 @@ public class ApplicationCommand {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ApplicationCommand)) return false;
+        ApplicationCommand that = (ApplicationCommand) o;
+        return com.google.common.base.Objects.equal(getName(), that.getName()) && com.google.common.base.Objects.equal(getDescription(), that.getDescription()) && com.google.common.base.Objects.equal(getOptions(), that.getOptions());
+    }
+
+    @Override
+    public int hashCode() {
+        return com.google.common.base.Objects.hashCode(getName(), getDescription(), getOptions());
+    }
+
+
+    @Override
+    public String toString() {
+        return "ApplicationCommand{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", options=" + options +
+                ", id=" + id +
+                '}';
+    }
+
     public String getName() {
         return this.name;
     }

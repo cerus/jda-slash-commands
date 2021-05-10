@@ -138,6 +138,7 @@ public class DiscordHttpClient {
     public CompletableFuture<Response> deleteGlobalCommand(final long commandId) {
         return this.execute(new Request.Builder()
                 .url(String.format("https://discord.com/api/v8/applications/%s/commands/%d", this.applicationId, commandId))
+                .addHeader("Authorization", "Bot " + this.botToken)
                 .delete()
                 .build(), 204);
     }
