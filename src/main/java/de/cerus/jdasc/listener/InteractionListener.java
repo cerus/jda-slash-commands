@@ -56,7 +56,7 @@ public class InteractionListener extends ListenerAdapter {
             //Direct messages
             else {
                 final PrivateChannel textChannel = jda.getPrivateChannelById(object.get("channel_id").getAsString());
-                final Interaction interaction = new Interaction(token, id, type, commandId, commandName, null,  textChannel, null, options);
+                final Interaction interaction = new Interaction(token, id, type, commandId, commandName, null, textChannel, null, options);
                 jda.getEventManager().handle(new CommandInteractionEvent(jda, interaction));
             }
 

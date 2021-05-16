@@ -1,7 +1,6 @@
 package de.cerus.jdasc.command;
 
 import com.google.common.base.Objects;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -77,21 +76,25 @@ public class ApplicationCommandOption {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ApplicationCommandOption)) return false;
-        ApplicationCommandOption that = (ApplicationCommandOption) o;
-        return isRequired() == that.isRequired() &&
-                getType() == that.getType() &&
-                Objects.equal(getName(), that.getName()) &&
-                Objects.equal(getDescription(), that.getDescription()) &&
-                Objects.equal(getChoices(), that.getChoices()) &&
-                (getOptions() == null || getOptions().isEmpty() || Objects.equal(getOptions(), that.getOptions()));
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ApplicationCommandOption)) {
+            return false;
+        }
+        final ApplicationCommandOption that = (ApplicationCommandOption) o;
+        return this.isRequired() == that.isRequired() &&
+                this.getType() == that.getType() &&
+                Objects.equal(this.getName(), that.getName()) &&
+                Objects.equal(this.getDescription(), that.getDescription()) &&
+                Objects.equal(this.getChoices(), that.getChoices()) &&
+                (this.getOptions() == null || this.getOptions().isEmpty() || Objects.equal(this.getOptions(), that.getOptions()));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getType(), getName(), getDescription(), isRequired(), getChoices(), getOptions());
+        return Objects.hashCode(this.getType(), this.getName(), this.getDescription(), this.isRequired(), this.getChoices(), this.getOptions());
     }
 
     public ApplicationCommandOptionType getType() {
@@ -121,12 +124,12 @@ public class ApplicationCommandOption {
     @Override
     public String toString() {
         return "ApplicationCommandOption{" +
-                "type=" + type +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", required=" + required +
-                ", choices=" + choices +
-                ", options=" + options +
+                "type=" + this.type +
+                ", name='" + this.name + '\'' +
+                ", description='" + this.description + '\'' +
+                ", required=" + this.required +
+                ", choices=" + this.choices +
+                ", options=" + this.options +
                 '}';
     }
 }

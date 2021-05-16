@@ -1,7 +1,6 @@
 package de.cerus.jdasc.command;
 
 import com.google.common.base.Objects;
-
 import java.util.function.Predicate;
 
 /**
@@ -31,16 +30,20 @@ public class ApplicationCommandOptionChoice {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ApplicationCommandOptionChoice)) return false;
-        ApplicationCommandOptionChoice that = (ApplicationCommandOptionChoice) o;
-        return Objects.equal(getName(), that.getName()) && Objects.equal(getValue(), that.getValue());
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ApplicationCommandOptionChoice)) {
+            return false;
+        }
+        final ApplicationCommandOptionChoice that = (ApplicationCommandOptionChoice) o;
+        return Objects.equal(this.getName(), that.getName()) && Objects.equal(this.getValue(), that.getValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getName(), getValue());
+        return Objects.hashCode(this.getName(), this.getValue());
     }
 
     public String getName() {

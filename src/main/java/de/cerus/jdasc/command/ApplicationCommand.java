@@ -42,26 +42,30 @@ public class ApplicationCommand {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ApplicationCommand)) return false;
-        ApplicationCommand that = (ApplicationCommand) o;
-        return com.google.common.base.Objects.equal(getName(), that.getName()) && com.google.common.base.Objects.equal(getDescription(), that.getDescription()) && com.google.common.base.Objects.equal(getOptions(), that.getOptions());
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ApplicationCommand)) {
+            return false;
+        }
+        final ApplicationCommand that = (ApplicationCommand) o;
+        return com.google.common.base.Objects.equal(this.getName(), that.getName()) && com.google.common.base.Objects.equal(this.getDescription(), that.getDescription()) && com.google.common.base.Objects.equal(this.getOptions(), that.getOptions());
     }
 
     @Override
     public int hashCode() {
-        return com.google.common.base.Objects.hashCode(getName(), getDescription(), getOptions());
+        return com.google.common.base.Objects.hashCode(this.getName(), this.getDescription(), this.getOptions());
     }
 
 
     @Override
     public String toString() {
         return "ApplicationCommand{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", options=" + options +
-                ", id=" + id +
+                "name='" + this.name + '\'' +
+                ", description='" + this.description + '\'' +
+                ", options=" + this.options +
+                ", id=" + this.id +
                 '}';
     }
 

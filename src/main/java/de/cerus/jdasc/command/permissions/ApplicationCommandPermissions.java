@@ -27,15 +27,19 @@ public class ApplicationCommandPermissions {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ApplicationCommandPermissions)) return false;
-        ApplicationCommandPermissions that = (ApplicationCommandPermissions) o;
-        return getId() == that.getId() && isPermission() == that.isPermission() && getType() == that.getType();
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ApplicationCommandPermissions)) {
+            return false;
+        }
+        final ApplicationCommandPermissions that = (ApplicationCommandPermissions) o;
+        return this.getId() == that.getId() && this.isPermission() == that.isPermission() && this.getType() == that.getType();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId(), getType(), isPermission());
+        return Objects.hashCode(this.getId(), this.getType(), this.isPermission());
     }
 }
