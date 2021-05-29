@@ -4,4 +4,4 @@ target/
 .idea/
 *.iml
 dependency-reduced-pom.xml
-src/main/java/de/cerus/jdasc/test.java
+src/main/java/dev/cerus/jdasc/test.java
