@@ -90,6 +90,11 @@ public class MyBot {
 
 ## Installation
 
+Since version 1.2.2, you can install `jda-slash-commands` from the central repository.
+
+<details>
+  <summary>Before 1.2.2</summary>
+
 **Maven**
 
 ``` xml
@@ -123,4 +128,35 @@ dependencies {
     implementation 'com.github.cerus:jda-slash-commands:TAG'
 }
 
+```
+
+</details>
+
+**Maven**
+
+```xml
+
+<dependencies>
+    <dependency>
+        <groupId>dev.cerus</groupId>
+        <artifactId>jda-slash-commands</artifactId>
+        <version>1.2.2</version> <!-- Replace with latest version -->
+        <scope>compile</scope>
+    </dependency>
+</dependencies>
+```
+
+**Gradle**
+
+```
+allprojects {
+    repositories {
+        ...
+        mavenCentral()
+    }
+}
+
+dependencies {
+    implementation 'dev.cerus:jda-slash-commands:1.2.2'
+}
 ```
