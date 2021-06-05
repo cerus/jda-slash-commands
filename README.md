@@ -15,6 +15,7 @@ This library is also lacking some documentation. If you have any questions feel 
 - Followup messages
 - Command permissions
 - [Command routers](https://github.com/cerus/jda-slash-commands/wiki/Command-Routers) (Automatically route interactions to your command framework)
+- Message components
 
 ## Example
 
