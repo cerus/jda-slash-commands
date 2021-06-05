@@ -2,6 +2,9 @@ package dev.cerus.jdasc.components;
 
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+import dev.cerus.jdasc.JDASlashCommands;
+import dev.cerus.jdasc.interaction.Interaction;
+import java.util.function.Consumer;
 import net.dv8tion.jda.api.entities.Emote;
 
 public class Button implements Component {
@@ -22,6 +25,58 @@ public class Button implements Component {
         this.customId = customId;
         this.url = url;
         this.disabled = disabled;
+    }
+
+    public static Button emojiLinkButton(final Style style, final String label, final String customId, final String url, final PartialEmoji emoji, final boolean disabled) {
+        return new Button(style, label, emoji, customId, url, disabled);
+    }
+
+    public static Button emojiLinkButton(final Style style, final String label, final String customId, final String url, final PartialEmoji emoji) {
+        return new Button(style, label, emoji, customId, url, false);
+    }
+
+    public static Button linkButton(final Style style, final String label, final String customId, final String url) {
+        return linkButton(style, label, customId, false, url);
+    }
+
+    public static Button linkButton(final Style style, final String label, final String customId, final boolean disabled, final String url) {
+        return new Button(style, label, null, customId, url, disabled);
+    }
+
+    public static Button normalButton(final Style style, final String label, final String customId) {
+        return normalButton(style, label, customId, false);
+    }
+
+    public static Button normalButton(final Style style, final String label, final String customId, final boolean disabled) {
+        return new Button(style, label, null, customId, null, disabled);
+    }
+
+    public static Button emojiButton(final Style style, final String label, final String customId, final PartialEmoji emoji) {
+        return emojiButton(style, label, customId, false, emoji);
+    }
+
+    public static Button emojiButton(final Style style, final String label, final String customId, final boolean disabled, final PartialEmoji emoji) {
+        return new Button(style, label, emoji, customId, null, disabled);
+    }
+
+    public Button oneTimeListener(final Consumer<Interaction> callback) {
+        if (this.style != Style.LINK) {
+            JDASlashCommands.addOneTimeComponentListener(this.getCustomId(), callback::accept);
+        }
+        return this;
+    }
+
+    public Button listener(final Consumer<Interaction> callback) {
+        if (this.style != Style.LINK) {
+            JDASlashCommands.addComponentListener(interaction -> {
+                final Component clickedComponent = interaction.getClickedComponent();
+                if (clickedComponent instanceof Button
+                        && ((Button) clickedComponent).getCustomId().equals(this.getCustomId())) {
+                    callback.accept(interaction);
+                }
+            });
+        }
+        return this;
     }
 
     public Style getStyle() {

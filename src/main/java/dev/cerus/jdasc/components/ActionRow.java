@@ -1,5 +1,6 @@
 package dev.cerus.jdasc.components;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ActionRow implements Component {
@@ -9,6 +10,10 @@ public class ActionRow implements Component {
 
     public ActionRow(final List<Component> components) {
         this.components = components;
+    }
+
+    public static ActionRow of(final Component... components) {
+        return new ActionRow(Arrays.asList(components));
     }
 
     public List<Component> getComponents() {

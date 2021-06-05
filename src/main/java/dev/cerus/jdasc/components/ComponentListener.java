@@ -9,7 +9,6 @@ public interface ComponentListener {
      *
      * @param interaction The interaction
      */
-    default void onInteraction(final Interaction interaction) {
-    }
+    void onInteraction(final Interaction interaction);
 
 }

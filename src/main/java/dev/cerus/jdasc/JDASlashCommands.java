@@ -10,7 +10,6 @@ import dev.cerus.jdasc.command.ApplicationCommandOption;
 import dev.cerus.jdasc.command.ApplicationCommandOptionType;
 import dev.cerus.jdasc.command.permissions.ApplicationCommandPermissions;
 import dev.cerus.jdasc.command.permissions.GuildApplicationCommandPermissions;
-import dev.cerus.jdasc.components.ActionRow;
 import dev.cerus.jdasc.components.Button;
 import dev.cerus.jdasc.components.Component;
 import dev.cerus.jdasc.components.ComponentListener;
@@ -54,7 +53,7 @@ public class JDASlashCommands {
     private static final Map<Long, ApplicationCommand> discordCommands = new HashMap<>();
     private static final Map<Long, Map<Long, ApplicationCommand>> guildCommands = new HashMap<>();
     private static final Map<ApplicationCommand, ApplicationCommandListener> commandListenerMap = new HashMap<>();
-    private static final Map<String, ComponentListener> temporaryComponentListeners = new HashMap<>();
+    private static final Map<String, ComponentListener> oneTimeComponentListeners = new HashMap<>();
     private static final List<ComponentListener> componentListeners = new ArrayList<>();
 
     private static DiscordHttpClient discordHttpClient;
@@ -67,8 +66,8 @@ public class JDASlashCommands {
         componentListeners.add(listener);
     }
 
-    public static void addTemporaryComponentListener(final String buttonId, final ComponentListener listener) {
-        temporaryComponentListeners.put(buttonId, listener);
+    public static void addOneTimeComponentListener(final String buttonId, final ComponentListener listener) {
+        oneTimeComponentListeners.put(buttonId, listener);
     }
 
     /**
@@ -617,19 +616,14 @@ public class JDASlashCommands {
                 }
                 break;
             case MESSAGE_COMPONENT:
-                final List<Component> components = interaction.getMessageComponents();
-                components.stream()
-                        .filter(component -> component instanceof ActionRow)
-                        .map(component -> (ActionRow) component)
-                        .flatMap(actionRow -> actionRow.getComponents().stream())
-                        .filter(component -> component instanceof Button)
-                        .map(component -> (Button) component)
-                        .forEach(button -> {
-                            if (temporaryComponentListeners.containsKey(button.getCustomId())) {
-                                final ComponentListener componentListener = temporaryComponentListeners.remove(button.getCustomId());
-                                componentListener.onInteraction(interaction);
-                            }
-                        });
+                final Component clickedComponent = interaction.getClickedComponent();
+                if (clickedComponent instanceof Button) {
+                    final Button button = (Button) clickedComponent;
+                    final ComponentListener componentListener = oneTimeComponentListeners.remove(button.getCustomId());
+                    if (componentListener != null) {
+                        componentListener.onInteraction(interaction);
+                    }
+                }
                 componentListeners.forEach(componentListener -> componentListener.onInteraction(interaction));
                 break;
         }
