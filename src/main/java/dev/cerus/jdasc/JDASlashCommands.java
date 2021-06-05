@@ -10,6 +10,10 @@ import dev.cerus.jdasc.command.ApplicationCommandOption;
 import dev.cerus.jdasc.command.ApplicationCommandOptionType;
 import dev.cerus.jdasc.command.permissions.ApplicationCommandPermissions;
 import dev.cerus.jdasc.command.permissions.GuildApplicationCommandPermissions;
+import dev.cerus.jdasc.components.ActionRow;
+import dev.cerus.jdasc.components.Button;
+import dev.cerus.jdasc.components.Component;
+import dev.cerus.jdasc.components.ComponentListener;
 import dev.cerus.jdasc.http.DiscordHttpClient;
 import dev.cerus.jdasc.interaction.Interaction;
 import dev.cerus.jdasc.interaction.followup.FollowupMessage;
@@ -50,11 +54,21 @@ public class JDASlashCommands {
     private static final Map<Long, ApplicationCommand> discordCommands = new HashMap<>();
     private static final Map<Long, Map<Long, ApplicationCommand>> guildCommands = new HashMap<>();
     private static final Map<ApplicationCommand, ApplicationCommandListener> commandListenerMap = new HashMap<>();
+    private static final Map<String, ComponentListener> temporaryComponentListeners = new HashMap<>();
+    private static final List<ComponentListener> componentListeners = new ArrayList<>();
 
     private static DiscordHttpClient discordHttpClient;
     private static EntityBuilder entityBuilder;
 
     private JDASlashCommands() {
+    }
+
+    public static void addComponentListener(final ComponentListener listener) {
+        componentListeners.add(listener);
+    }
+
+    public static void addTemporaryComponentListener(final String buttonId, final ComponentListener listener) {
+        temporaryComponentListeners.put(buttonId, listener);
     }
 
     /**
@@ -333,8 +347,7 @@ public class JDASlashCommands {
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final MessageEmbed... embeds) {
         return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
-                false, "", Arrays.asList(embeds), 0
-        ));
+                false, "", Arrays.asList(embeds), 0));
     }
 
     /**
@@ -350,8 +363,7 @@ public class JDASlashCommands {
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final String message) {
         return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
-                false, message, new ArrayList<>(), 0
-        ));
+                false, message, new ArrayList<>(), 0));
     }
 
     /**
@@ -368,8 +380,7 @@ public class JDASlashCommands {
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final String message, final int flags) {
         return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
-                false, message, new ArrayList<>(), flags
-        ));
+                false, message, new ArrayList<>(), flags));
     }
 
     /**
@@ -589,18 +600,38 @@ public class JDASlashCommands {
      * @param interaction The interaction
      */
     public static void handleInteraction(final Interaction interaction) {
-        final ApplicationCommand command = commandMap.get(interaction.getCommandId());
-        final ApplicationCommandListener listener = commandListenerMap.get(command);
+        switch (interaction.getType()) {
+            case APPLICATION_COMMAND:
+                final ApplicationCommand command = commandMap.get(interaction.getCommandId());
+                final ApplicationCommandListener listener = commandListenerMap.get(command);
 
-        if (command == null || listener == null) {
-            // Discord sent us a command that wasn't registered. We can't do anything about that so we just do nothing
-            return;
-        }
+                if (command == null || listener == null) {
+                    // Discord sent us a command that wasn't registered. We can't do anything about that so we just do nothing
+                    return;
+                }
 
-        listener.onInteraction(interaction);
-        final Map<String, InteractionResponseOption> arguments = findArguments(command, interaction);
-        if (arguments != null && !arguments.isEmpty()) {
-            listener.handleArguments(interaction, arguments);
+                listener.onInteraction(interaction);
+                final Map<String, InteractionResponseOption> arguments = findArguments(command, interaction);
+                if (arguments != null && !arguments.isEmpty()) {
+                    listener.handleArguments(interaction, arguments);
+                }
+                break;
+            case MESSAGE_COMPONENT:
+                final List<Component> components = interaction.getMessageComponents();
+                components.stream()
+                        .filter(component -> component instanceof ActionRow)
+                        .map(component -> (ActionRow) component)
+                        .flatMap(actionRow -> actionRow.getComponents().stream())
+                        .filter(component -> component instanceof Button)
+                        .map(component -> (Button) component)
+                        .forEach(button -> {
+                            if (temporaryComponentListeners.containsKey(button.getCustomId())) {
+                                final ComponentListener componentListener = temporaryComponentListeners.remove(button.getCustomId());
+                                componentListener.onInteraction(interaction);
+                            }
+                        });
+                componentListeners.forEach(componentListener -> componentListener.onInteraction(interaction));
+                break;
         }
     }
 
