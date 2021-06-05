@@ -14,7 +14,7 @@ public interface ApplicationCommandListener {
      *
      * @param interaction The interaction
      */
-    void onInteraction(Interaction interaction);
+    void onInteraction(final Interaction interaction);
 
     /**
      * Gets called if a argument was specified

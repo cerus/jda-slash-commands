@@ -10,6 +10,9 @@ import dev.cerus.jdasc.command.ApplicationCommandOption;
 import dev.cerus.jdasc.command.ApplicationCommandOptionType;
 import dev.cerus.jdasc.command.permissions.ApplicationCommandPermissions;
 import dev.cerus.jdasc.command.permissions.GuildApplicationCommandPermissions;
+import dev.cerus.jdasc.components.Button;
+import dev.cerus.jdasc.components.Component;
+import dev.cerus.jdasc.components.ComponentListener;
 import dev.cerus.jdasc.http.DiscordHttpClient;
 import dev.cerus.jdasc.interaction.Interaction;
 import dev.cerus.jdasc.interaction.followup.FollowupMessage;
@@ -20,6 +23,7 @@ import dev.cerus.jdasc.listener.InteractionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,11 +54,21 @@ public class JDASlashCommands {
     private static final Map<Long, ApplicationCommand> discordCommands = new HashMap<>();
     private static final Map<Long, Map<Long, ApplicationCommand>> guildCommands = new HashMap<>();
     private static final Map<ApplicationCommand, ApplicationCommandListener> commandListenerMap = new HashMap<>();
+    private static final Map<String, ComponentListener> oneTimeComponentListeners = new HashMap<>();
+    private static final List<ComponentListener> componentListeners = new ArrayList<>();
 
     private static DiscordHttpClient discordHttpClient;
     private static EntityBuilder entityBuilder;
 
     private JDASlashCommands() {
+    }
+
+    public static void addComponentListener(final ComponentListener listener) {
+        componentListeners.add(listener);
+    }
+
+    public static void addOneTimeComponentListener(final String buttonId, final ComponentListener listener) {
+        oneTimeComponentListeners.put(buttonId, listener);
     }
 
     /**
@@ -79,7 +93,7 @@ public class JDASlashCommands {
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final MessageEmbed... embeds) {
-        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds), 0));
+        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds), 0, Collections.emptyList()));
     }
 
     /**
@@ -93,7 +107,7 @@ public class JDASlashCommands {
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final int flags, final MessageEmbed... embeds) {
-        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds), flags));
+        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds), flags, Collections.emptyList()));
     }
 
     /**
@@ -106,7 +120,7 @@ public class JDASlashCommands {
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final String message) {
-        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>(), 0));
+        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>(), 0, Collections.emptyList()));
     }
 
     /**
@@ -120,7 +134,7 @@ public class JDASlashCommands {
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final String message, final int flags) {
-        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>(), flags));
+        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>(), flags, Collections.emptyList()));
     }
 
     /**
@@ -146,7 +160,7 @@ public class JDASlashCommands {
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final MessageEmbed... embeds) {
-        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds), 0));
+        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds), 0, Collections.emptyList()));
     }
 
     /**
@@ -160,7 +174,7 @@ public class JDASlashCommands {
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final int flags, final MessageEmbed... embeds) {
-        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds), flags));
+        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds), flags, Collections.emptyList()));
     }
 
     /**
@@ -173,7 +187,7 @@ public class JDASlashCommands {
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final String message) {
-        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>(), 0));
+        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>(), 0, Collections.emptyList()));
     }
 
     /**
@@ -187,7 +201,7 @@ public class JDASlashCommands {
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final String message, final int flags) {
-        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>(), flags));
+        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>(), flags, Collections.emptyList()));
     }
 
     /**
@@ -333,8 +347,7 @@ public class JDASlashCommands {
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final MessageEmbed... embeds) {
         return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
-                false, "", Arrays.asList(embeds), 0
-        ));
+                false, "", Arrays.asList(embeds), 0));
     }
 
     /**
@@ -350,8 +363,7 @@ public class JDASlashCommands {
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final String message) {
         return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
-                false, message, new ArrayList<>(), 0
-        ));
+                false, message, new ArrayList<>(), 0));
     }
 
     /**
@@ -368,8 +380,7 @@ public class JDASlashCommands {
      */
     public static CompletableFuture<Void> editInteractionResponse(final Interaction interaction, final String message, final int flags) {
         return editInteractionResponse(interaction, new InteractionApplicationCommandCallbackData(
-                false, message, new ArrayList<>(), flags
-        ));
+                false, message, new ArrayList<>(), flags));
     }
 
     /**
@@ -589,18 +600,33 @@ public class JDASlashCommands {
      * @param interaction The interaction
      */
     public static void handleInteraction(final Interaction interaction) {
-        final ApplicationCommand command = commandMap.get(interaction.getCommandId());
-        final ApplicationCommandListener listener = commandListenerMap.get(command);
+        switch (interaction.getType()) {
+            case APPLICATION_COMMAND:
+                final ApplicationCommand command = commandMap.get(interaction.getCommandId());
+                final ApplicationCommandListener listener = commandListenerMap.get(command);
 
-        if (command == null || listener == null) {
-            // Discord sent us a command that wasn't registered. We can't do anything about that so we just do nothing
-            return;
-        }
+                if (command == null || listener == null) {
+                    // Discord sent us a command that wasn't registered. We can't do anything about that so we just do nothing
+                    return;
+                }
 
-        listener.onInteraction(interaction);
-        final Map<String, InteractionResponseOption> arguments = findArguments(command, interaction);
-        if (arguments != null && !arguments.isEmpty()) {
-            listener.handleArguments(interaction, arguments);
+                listener.onInteraction(interaction);
+                final Map<String, InteractionResponseOption> arguments = findArguments(command, interaction);
+                if (arguments != null && !arguments.isEmpty()) {
+                    listener.handleArguments(interaction, arguments);
+                }
+                break;
+            case MESSAGE_COMPONENT:
+                final Component clickedComponent = interaction.getClickedComponent();
+                if (clickedComponent instanceof Button) {
+                    final Button button = (Button) clickedComponent;
+                    final ComponentListener componentListener = oneTimeComponentListeners.remove(button.getCustomId());
+                    if (componentListener != null) {
+                        componentListener.onInteraction(interaction);
+                    }
+                }
+                componentListeners.forEach(componentListener -> componentListener.onInteraction(interaction));
+                break;
         }
     }
 

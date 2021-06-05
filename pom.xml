@@ -6,7 +6,7 @@
 
     <groupId>dev.cerus</groupId>
     <artifactId>jda-slash-commands</artifactId>
-    <version>1.2.2</version>
+    <version>1.3.0</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -24,10 +24,16 @@
         <developer>
             <name>Maximilian Dorn</name>
             <email>m.dorn.2003@web.de</email>
-            <organization>PypeWare GmbH</organization>
-            <organizationUrl>https://github.com/pypeware</organizationUrl>
+            <url>https://cerus.dev</url>
         </developer>
     </developers>
+
+    <contributors>
+        <contributor>
+            <name>PringlePot</name>
+            <url>https://github.com/PringlePot</url>
+        </contributor>
+    </contributors>
 
     <scm>
         <connection>scm:git:git://github.com/cerus/jda-slash-commands.git</connection>
