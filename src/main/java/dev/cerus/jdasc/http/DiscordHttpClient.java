@@ -8,11 +8,15 @@ import dev.cerus.jdasc.command.ApplicationCommand;
 import dev.cerus.jdasc.command.ApplicationCommandOptionType;
 import dev.cerus.jdasc.command.permissions.ApplicationCommandPermissionType;
 import dev.cerus.jdasc.command.permissions.ApplicationCommandPermissions;
+import dev.cerus.jdasc.components.Button;
+import dev.cerus.jdasc.components.ComponentType;
 import dev.cerus.jdasc.gson.ApplicationCommandOptionTypeTypeAdapter;
 import dev.cerus.jdasc.gson.ApplicationCommandPermissionTypeAdapter;
+import dev.cerus.jdasc.gson.ComponentTypeTypeAdapter;
 import dev.cerus.jdasc.gson.InteractionResponseTypeAdapter;
 import dev.cerus.jdasc.gson.InteractionResponseTypeTypeAdapter;
 import dev.cerus.jdasc.gson.MessageEmbedTypeAdapter;
+import dev.cerus.jdasc.gson.StyleTypeAdapter;
 import dev.cerus.jdasc.interaction.Interaction;
 import dev.cerus.jdasc.interaction.followup.FollowupMessage;
 import dev.cerus.jdasc.interaction.response.InteractionApplicationCommandCallbackData;
@@ -65,6 +69,8 @@ public class DiscordHttpClient {
                 .registerTypeAdapter(ApplicationCommandPermissionType.class, new ApplicationCommandPermissionTypeAdapter())
                 .registerTypeAdapter(MessageEmbed.class, new MessageEmbedTypeAdapter(jda))
                 .registerTypeAdapter(InteractionResponse.class, new InteractionResponseTypeAdapter(jda))
+                .registerTypeAdapter(ComponentType.class, new ComponentTypeTypeAdapter())
+                .registerTypeAdapter(Button.Style.class, new StyleTypeAdapter())
                 .create();
     }
 

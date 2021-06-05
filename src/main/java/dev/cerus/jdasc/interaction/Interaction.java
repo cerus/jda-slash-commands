@@ -1,6 +1,7 @@
 package dev.cerus.jdasc.interaction;
 
 import dev.cerus.jdasc.JDASlashCommands;
+import dev.cerus.jdasc.components.Component;
 import dev.cerus.jdasc.interaction.followup.FollowupMessage;
 import dev.cerus.jdasc.interaction.response.InteractionApplicationCommandCallbackData;
 import dev.cerus.jdasc.interaction.response.InteractionResponse;
@@ -8,6 +9,7 @@ import dev.cerus.jdasc.interaction.response.InteractionResponseOption;
 import dev.cerus.jdasc.interaction.response.InteractionResponseType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.dv8tion.jda.api.entities.Guild;
@@ -27,6 +29,8 @@ public class Interaction {
     private final Member member;
     private final String token;
     private final List<InteractionResponseOption> options;
+    private final List<Component> messageComponents;
+    private final Component clickedComponent;
 
     public Interaction(final String token,
                        final long id,
@@ -36,7 +40,9 @@ public class Interaction {
                        final Guild guild,
                        final MessageChannel channel,
                        final Member member,
-                       final List<InteractionResponseOption> options) {
+                       final List<InteractionResponseOption> options,
+                       final List<Component> messageComponents,
+                       final Component clickedComponent) {
         this.token = token;
         this.id = id;
         this.type = type;
@@ -46,6 +52,8 @@ public class Interaction {
         this.channel = channel;
         this.member = member;
         this.options = options;
+        this.messageComponents = messageComponents;
+        this.clickedComponent = clickedComponent;
     }
 
 
@@ -121,8 +129,7 @@ public class Interaction {
                         false,
                         "",
                         embeds,
-                        0
-                )
+                        0)
         ));
     }
 
@@ -144,8 +151,31 @@ public class Interaction {
                         false,
                         "",
                         embeds,
-                        flags
-                )
+                        flags)
+        ));
+    }
+
+    public CompletableFuture<Void> respond(final List<MessageEmbed> embeds, final List<Component> components) {
+        return this.respond(new InteractionResponse(
+                InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                new InteractionApplicationCommandCallbackData(
+                        false,
+                        "",
+                        embeds,
+                        0,
+                        components)
+        ));
+    }
+
+    public CompletableFuture<Void> respond(final List<MessageEmbed> embeds, final List<Component> components, final int flags) {
+        return this.respond(new InteractionResponse(
+                InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                new InteractionApplicationCommandCallbackData(
+                        false,
+                        "",
+                        embeds,
+                        flags,
+                        components)
         ));
     }
 
@@ -162,8 +192,8 @@ public class Interaction {
                 new InteractionApplicationCommandCallbackData(
                         false,
                         message,
-                        null, 0
-                )
+                        null,
+                        0)
         ));
     }
 
@@ -181,8 +211,32 @@ public class Interaction {
                 new InteractionApplicationCommandCallbackData(
                         false,
                         message,
-                        null, flags
-                )
+                        null,
+                        flags)
+        ));
+    }
+
+    public CompletableFuture<Void> respond(final String message, final List<Component> components) {
+        return this.respond(new InteractionResponse(
+                InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                new InteractionApplicationCommandCallbackData(
+                        false,
+                        message,
+                        null,
+                        0,
+                        components)
+        ));
+    }
+
+    public CompletableFuture<Void> respond(final String message, final List<Component> components, final int flags) {
+        return this.respond(new InteractionResponse(
+                InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+                new InteractionApplicationCommandCallbackData(
+                        false,
+                        message,
+                        null,
+                        flags,
+                        components)
         ));
     }
 
@@ -195,7 +249,7 @@ public class Interaction {
      * @return The sent message
      */
     public CompletableFuture<Message> sendFollowup(final MessageEmbed... embeds) {
-        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), 0));
+        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), 0, Collections.emptyList()));
     }
 
     /**
@@ -208,7 +262,7 @@ public class Interaction {
      * @return The sent message
      */
     public CompletableFuture<Message> sendFollowup(final int flags, final MessageEmbed... embeds) {
-        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), flags));
+        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), flags, Collections.emptyList()));
     }
 
     /**
@@ -220,7 +274,7 @@ public class Interaction {
      * @return The sent message
      */
     public CompletableFuture<Message> sendFollowup(final String message) {
-        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), 0));
+        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), 0, Collections.emptyList()));
     }
 
     /**
@@ -233,7 +287,23 @@ public class Interaction {
      * @return The sent message
      */
     public CompletableFuture<Message> sendFollowup(final String message, final int flags) {
-        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), flags));
+        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), flags, Collections.emptyList()));
+    }
+
+    public CompletableFuture<Message> sendFollowup(final String message, final List<Component> components) {
+        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), 0, components));
+    }
+
+    public CompletableFuture<Message> sendFollowup(final String message, final int flags, final List<Component> components) {
+        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), flags, components));
+    }
+
+    public CompletableFuture<Message> sendFollowup(final List<Component> components, final MessageEmbed... embeds) {
+        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), 0, components));
+    }
+
+    public CompletableFuture<Message> sendFollowup(final int flags, final List<Component> components, final MessageEmbed... embeds) {
+        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), flags, components));
     }
 
     /**
@@ -262,6 +332,14 @@ public class Interaction {
 
     public InteractionResponseOption getArgument(final String name) {
         return this.getOption(name);
+    }
+
+    public List<Component> getMessageComponents() {
+        return this.messageComponents;
+    }
+
+    public Component getClickedComponent() {
+        return this.clickedComponent;
     }
 
     public InteractionResponseOption getOption(final String name) {

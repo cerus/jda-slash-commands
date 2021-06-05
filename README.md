@@ -15,8 +15,11 @@ This library is also lacking some documentation. If you have any questions feel 
 - Followup messages
 - Command permissions
 - [Command routers](https://github.com/cerus/jda-slash-commands/wiki/Command-Routers) (Automatically route interactions to your command framework)
+- Message components
 
 ## Example
+
+Slash Commands:
 
 ```java
 public class MyBot {
@@ -85,6 +88,82 @@ public class MyBot {
 ![Hello Response](https://i.imgur.com/bXng3nG.png)
 
 ![Animal Response](https://i.imgur.com/6sEOMBk.png)
+
+</details>
+
+Message components:
+
+```java
+public class MyBot {
+
+    private static final String BOT_TOKEN = "********";
+    private static final String APPLICATION_ID = "12345654321";
+
+    public static void main(String[] args) {
+        JDA jda = JDABuilder.setRawEventsEnabled(true).createDefault(BOT_TOKEN).build();
+        initCommands(jda);
+    }
+
+    public void initCommands(JDA jda) {
+        JDASlashCommands.initialize(jda, BOT_TOKEN, APPLICATION_ID);
+
+        // Add a component listener that will get called
+        // every time a component is clicked
+        JDASlashCommands.addComponentListener(interaction -> {
+            final Component clickedComponent = interaction.getClickedComponent();
+            if (clickedComponent instanceof Button) {
+                final Button button = clickedComponent.cast();
+                interaction.respond("You clicked " + button.getLabel() + "!");
+            }
+        });
+
+        // Add a one time component listener that will 
+        // get called when a button with the provided 
+        // button id is clicked
+        JDASlashCommands.addOneTimeComponentListener("my_btn", interaction -> {
+            final Component clickedComponent = interaction.getClickedComponent();
+            final Button button = clickedComponent.cast();
+            interaction.respond("You clicked " + button.getLabel() + "!");
+        });
+
+        // Create an example command and respond to 
+        // interactions with message components
+        JDASlashCommands.submitGlobalCommand(new CommandBuilder()
+                .name("test")
+                .desc("Test command")
+                .build(), interaction -> {
+            interaction.respond("Available actions:", Arrays.asList(
+                    ActionRow.of(
+                            Button.normalButton(Button.Style.PRIMARY, "Action 1", "my_btn"),
+                            Button.normalButton(Button.Style.SECONDARY, "Action 2", "my_btn_0"),
+                            Button.normalButton(Button.Style.DANGER, "Action 3", "my_btn_1"),
+                            Button.normalButton(Button.Style.SUCCESS, "Action 4", "my_btn_2")
+                    ),
+                    ActionRow.of(
+                            Button.emojiButton(Button.Style.SUCCESS, "Emoji!", "my_btn_3",
+                                    Button.PartialEmoji.getDefaultEmoji("❤️")),
+                            Button.emojiButton(Button.Style.DANGER, "Another emoji!", "my_btn_4",
+                                    Button.PartialEmoji.getEmojiFromEmote(jda.getEmoteById(850779306803986442L)))
+                            //
+                            // Link buttons seem to be broken at the moment
+                            //
+                            //Button.emojiLinkButton(Button.Style.DANGER, "Emoji with link!", "https://cerus.dev",
+                            //        Button.PartialEmoji.getDefaultEmoji("✨")),
+                            //Button.linkButton(Button.Style.SECONDARY, "Link!", "https://discord.com")
+                    )
+            ));
+        });
+    }
+
+}
+```
+
+<details>
+  <summary>Pictures</summary>
+
+![Img 1](https://i.imgur.com/xlg2hYm.png)
+
+![Img 2](https://i.imgur.com/vpGX60r.png)
 
 </details>
 
