@@ -23,6 +23,7 @@ import dev.cerus.jdasc.listener.InteractionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +93,7 @@ public class JDASlashCommands {
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final MessageEmbed... embeds) {
-        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds), 0));
+        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds), 0, Collections.emptyList()));
     }
 
     /**
@@ -106,7 +107,7 @@ public class JDASlashCommands {
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final int flags, final MessageEmbed... embeds) {
-        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds), flags));
+        return editFollowupMessage(interaction, messageId, new FollowupMessage("", false, Arrays.asList(embeds), flags, Collections.emptyList()));
     }
 
     /**
@@ -119,7 +120,7 @@ public class JDASlashCommands {
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final String message) {
-        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>(), 0));
+        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>(), 0, Collections.emptyList()));
     }
 
     /**
@@ -133,7 +134,7 @@ public class JDASlashCommands {
      * @return A future
      */
     public static CompletableFuture<Void> editFollowupMessage(final Interaction interaction, final long messageId, final String message, final int flags) {
-        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>(), flags));
+        return editFollowupMessage(interaction, messageId, new FollowupMessage(message, false, new ArrayList<>(), flags, Collections.emptyList()));
     }
 
     /**
@@ -159,7 +160,7 @@ public class JDASlashCommands {
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final MessageEmbed... embeds) {
-        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds), 0));
+        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds), 0, Collections.emptyList()));
     }
 
     /**
@@ -173,7 +174,7 @@ public class JDASlashCommands {
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final int flags, final MessageEmbed... embeds) {
-        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds), flags));
+        return submitFollowupMessage(interaction, new FollowupMessage("", false, Arrays.asList(embeds), flags, Collections.emptyList()));
     }
 
     /**
@@ -186,7 +187,7 @@ public class JDASlashCommands {
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final String message) {
-        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>(), 0));
+        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>(), 0, Collections.emptyList()));
     }
 
     /**
@@ -200,7 +201,7 @@ public class JDASlashCommands {
      * @return The sent message
      */
     public static CompletableFuture<Message> submitFollowupMessage(final Interaction interaction, final String message, final int flags) {
-        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>(), flags));
+        return submitFollowupMessage(interaction, new FollowupMessage(message, false, new ArrayList<>(), flags, Collections.emptyList()));
     }
 
     /**

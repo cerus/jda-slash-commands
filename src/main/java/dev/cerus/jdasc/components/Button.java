@@ -13,9 +13,9 @@ public class Button implements Component {
     private final Style style;
     private final String label;
     private final PartialEmoji emoji;
+    private final String url;
     @SerializedName("custom_id")
     private final String customId;
-    private final String url;
     private final boolean disabled;
 
     public Button(final Style style, final String label, final PartialEmoji emoji, final String customId, final String url, final boolean disabled) {
@@ -27,20 +27,20 @@ public class Button implements Component {
         this.disabled = disabled;
     }
 
-    public static Button emojiLinkButton(final Style style, final String label, final String customId, final String url, final PartialEmoji emoji, final boolean disabled) {
-        return new Button(style, label, emoji, customId, url, disabled);
+    public static Button emojiLinkButton(final Style style, final String label, final String url, final PartialEmoji emoji, final boolean disabled) {
+        return new Button(style, label, emoji, null, url, disabled);
     }
 
-    public static Button emojiLinkButton(final Style style, final String label, final String customId, final String url, final PartialEmoji emoji) {
-        return new Button(style, label, emoji, customId, url, false);
+    public static Button emojiLinkButton(final Style style, final String label, final String url, final PartialEmoji emoji) {
+        return new Button(style, label, emoji, null, url, false);
     }
 
-    public static Button linkButton(final Style style, final String label, final String customId, final String url) {
-        return linkButton(style, label, customId, false, url);
+    public static Button linkButton(final Style style, final String label, final String url) {
+        return linkButton(style, label, false, url);
     }
 
-    public static Button linkButton(final Style style, final String label, final String customId, final boolean disabled, final String url) {
-        return new Button(style, label, null, customId, url, disabled);
+    public static Button linkButton(final Style style, final String label, final boolean disabled, final String url) {
+        return new Button(style, label, null, null, url, disabled);
     }
 
     public static Button normalButton(final Style style, final String label, final String customId) {

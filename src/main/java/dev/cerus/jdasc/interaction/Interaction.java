@@ -9,6 +9,7 @@ import dev.cerus.jdasc.interaction.response.InteractionResponseOption;
 import dev.cerus.jdasc.interaction.response.InteractionResponseType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.dv8tion.jda.api.entities.Guild;
@@ -248,7 +249,7 @@ public class Interaction {
      * @return The sent message
      */
     public CompletableFuture<Message> sendFollowup(final MessageEmbed... embeds) {
-        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), 0));
+        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), 0, Collections.emptyList()));
     }
 
     /**
@@ -261,7 +262,7 @@ public class Interaction {
      * @return The sent message
      */
     public CompletableFuture<Message> sendFollowup(final int flags, final MessageEmbed... embeds) {
-        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), flags));
+        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), flags, Collections.emptyList()));
     }
 
     /**
@@ -273,7 +274,7 @@ public class Interaction {
      * @return The sent message
      */
     public CompletableFuture<Message> sendFollowup(final String message) {
-        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), 0));
+        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), 0, Collections.emptyList()));
     }
 
     /**
@@ -286,7 +287,23 @@ public class Interaction {
      * @return The sent message
      */
     public CompletableFuture<Message> sendFollowup(final String message, final int flags) {
-        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), flags));
+        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), flags, Collections.emptyList()));
+    }
+
+    public CompletableFuture<Message> sendFollowup(final String message, final List<Component> components) {
+        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), 0, components));
+    }
+
+    public CompletableFuture<Message> sendFollowup(final String message, final int flags, final List<Component> components) {
+        return this.sendFollowup(new FollowupMessage(message, false, new ArrayList<>(), flags, components));
+    }
+
+    public CompletableFuture<Message> sendFollowup(final List<Component> components, final MessageEmbed... embeds) {
+        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), 0, components));
+    }
+
+    public CompletableFuture<Message> sendFollowup(final int flags, final List<Component> components, final MessageEmbed... embeds) {
+        return this.sendFollowup(new FollowupMessage("", false, Arrays.asList(embeds), flags, components));
     }
 
     /**
