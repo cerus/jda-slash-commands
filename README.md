@@ -1,3 +1,5 @@
+[![Maven Central](https://img.shields.io/maven-central/v/dev.cerus/jda-slash-commands)](https://search.maven.org/artifact/dev.cerus/jda-slash-commands) ![GitHub](https://img.shields.io/github/license/cerus/jda-slash-commands) ![GitHub Sponsors](https://img.shields.io/github/sponsors/cerus)
+
 # jda-slash-commands
 
 [Slash commands](https://discord.com/developers/docs/interactions/slash-commands) for [JDA](https://github.com/DV8FromTheWorld/JDA)
@@ -219,7 +221,7 @@ dependencies {
     <dependency>
         <groupId>dev.cerus</groupId>
         <artifactId>jda-slash-commands</artifactId>
-        <version>1.2.2</version> <!-- Replace with latest version -->
+        <version>1.3.1</version> <!-- Replace with latest version -->
         <scope>compile</scope>
     </dependency>
 </dependencies>
@@ -236,6 +238,6 @@ allprojects {
 }
 
 dependencies {
-    implementation 'dev.cerus:jda-slash-commands:1.2.2'
+    implementation 'dev.cerus:jda-slash-commands:1.3.1'
 }
 ```

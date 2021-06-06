@@ -26,12 +26,14 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.RawGatewayEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.hooks.SubscribeEvent;
 import net.dv8tion.jda.api.utils.data.DataObject;
 import org.jetbrains.annotations.NotNull;
 
 public class InteractionListener extends ListenerAdapter {
 
     @Override
+    @SubscribeEvent
     public void onRawGateway(@NotNull final RawGatewayEvent event) {
         if (event.getType().equals("INTERACTION_CREATE")) {
             final DataObject payload = event.getPayload();
@@ -195,6 +197,7 @@ public class InteractionListener extends ListenerAdapter {
     }
 
     @Override
+    @SubscribeEvent
     public void onGenericEvent(@NotNull final GenericEvent event) {
         if (!(event instanceof CommandInteractionEvent)) {
             return;
