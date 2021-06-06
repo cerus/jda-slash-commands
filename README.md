@@ -1,4 +1,4 @@
-![Maven Central](https://img.shields.io/maven-central/v/dev.cerus/jda-slash-commands) ![GitHub](https://img.shields.io/github/license/cerus/jda-slash-commands) ![GitHub Sponsors](https://img.shields.io/github/sponsors/cerus)
+[![Maven Central](https://img.shields.io/maven-central/v/dev.cerus/jda-slash-commands)](https://search.maven.org/artifact/dev.cerus/jda-slash-commands) ![GitHub](https://img.shields.io/github/license/cerus/jda-slash-commands) ![GitHub Sponsors](https://img.shields.io/github/sponsors/cerus)
 
 # jda-slash-commands
 
