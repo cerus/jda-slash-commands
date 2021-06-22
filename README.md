@@ -1,5 +1,12 @@
 [![Maven Central](https://img.shields.io/maven-central/v/dev.cerus/jda-slash-commands)](https://search.maven.org/artifact/dev.cerus/jda-slash-commands) ![GitHub](https://img.shields.io/github/license/cerus/jda-slash-commands) ![GitHub Sponsors](https://img.shields.io/github/sponsors/cerus)
 
+# Notice
+JDA now officially supports interactions (slash commands and buttons) in release 4.3.0. That means that this library will no longer receive updates. 
+
+---
+
+<br><br>
+
 # jda-slash-commands
 
 [Slash commands](https://discord.com/developers/docs/interactions/slash-commands) for [JDA](https://github.com/DV8FromTheWorld/JDA)
